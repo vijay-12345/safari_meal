@@ -1,0 +1,119 @@
+<?php  
+use App\Product;
+//use DB;
+?>
+
+<?php $__env->startSection('title', Lang::get('home.add_new_address')); ?>
+<?php $__env->startSection('content'); ?>
+<div class="updateaddress">	
+	 <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal">&times;</button>	    
+	    <h4 class="modal-title">Edit Address </h4>	    
+	</div> 	
+	<div class="modal-body">                                                       						                
+		<div class="content-block choices-toppings__container">                                                                   
+			<?php echo Form::open(array('url'=>'updateaddressbook','class' =>'updateaddress')); ?> 
+			<input type="hidden" value="<?php echo e(Auth::user()->id); ?>" name="user_id" class="form-control icon-field"> 									
+			<input type="hidden" value="<?php echo e($addressid); ?>" name="id" class="form-control icon-field"> 								
+			<div class="form-group">
+<label for="first_address"><?php echo e(Lang::get('home.first_address')); ?> <span class="red">*</span></label>
+				<input type="text" name="first_address" value="<?php if(!empty($first_address)): ?> <?php echo e($first_address); ?> <?php endif; ?>" placeholder="<?php echo e(Lang::get('home.first_address')); ?>" class="form-control icon-field">	
+				<i class="flaticon-internet"></i>
+<p><?php echo e(Lang::get('home.first_address_hint')); ?></p>
+				<?php echo Form::errorMsg('first_address', $errors); ?>
+
+			</div>	
+			<div class="form-group">
+				<input type="text" name="second_address" value="<?php if(!empty($second_address)): ?> <?php echo e($second_address); ?> <?php endif; ?>" placeholder="<?php echo e(Lang::get('home.second_address')); ?>" class="form-control icon-field">	
+				<i class="flaticon-internet"></i>
+<p><?php echo e(Lang::get('home.second_address_hint')); ?></p>
+			</div>
+			<div class="form-group">
+<label for="country"><?php echo e(Lang::get('home.country')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker" name="country" id="country">
+					<option value="">Country</option>
+					<?php if(isset($countries)): ?>
+					<?php foreach($countries as $countrie): ?>
+					<option data-option="<?php echo e($countrie['country_id']); ?>" <?php if($country == $countrie['country_code']): ?> selected <?php endif; ?> value="<?php echo e($countrie['country_code']); ?>"><?php echo e($countrie['country_name']); ?></option>
+					<?php endforeach; ?>
+					<?php endif; ?>					
+				</select>								
+				<i class="flaticon-earth"></i>
+				<?php echo Form::errorMsg('country', $errors); ?>
+
+			</div>
+			<div class="form-group">
+<label for="states"><?php echo e(Lang::get('home.state')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker selector" name="state" id="states">										
+					<?php if(isset($states)): ?>
+					<?php foreach($states as $state): ?>					
+					<option data-option="<?php echo e($state['state_id']); ?>" <?php if($stateId==$state['state_id']): ?> selected <?php endif; ?> value="<?php echo e($state['state_id']); ?>"><?php echo e($state['state_name']); ?></option>
+					<?php endforeach; ?>
+					<?php endif; ?>
+				</select>
+				<input style="display:none" class="form-control icon-field selector" type="text" name="state"></input>								
+				<i class="flaticon-location"></i>
+				<?php echo Form::errorMsg('state', $errors); ?>
+
+			</div>
+			<div class="form-group">
+<label for="cities"><?php echo e(Lang::get('home.city')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker selector" name="city" id="cities">										
+					<?php if(isset($cities)): ?>
+					<?php foreach($cities as $city): ?>					
+					<option data-option="<?php echo e($city['id']); ?>" <?php if($cityId==$city['id']): ?> selected <?php endif; ?> value="<?php echo e($city['id']); ?>"><?php echo e($city['name']); ?></option>
+					<?php endforeach; ?>
+					<?php endif; ?>
+				</select>
+				<input style="display:none" class="form-control icon-field selector" type="text" name="city" value=""></input>
+				<i class="flaticon-gps-1"></i>
+				<?php echo Form::errorMsg('city', $errors); ?>
+
+			</div>	
+			<div class="form-group">
+<label for="areaa"><?php echo e(Lang::get('home.area')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker selector" name="area" id="areaa">										
+					<?php if(isset($areas)): ?>
+					<?php foreach($areas as $area): ?>					
+					<option data-option="<?php echo e($area['id']); ?>" <?php if($areaId==$area['id']): ?> selected <?php endif; ?> value="<?php echo e($area['id']); ?>"><?php echo e($area['name']); ?></option>
+					<?php endforeach; ?>
+					<?php endif; ?>
+				</select>
+				<input style="display:none" class="form-control icon-field selector" type="text" name="area"></input>
+				<i class="flaticon-gps-2"></i>
+				<?php echo Form::errorMsg('area', $errors); ?>
+
+			</div>		
+<div class="form-group">
+<label for="landmark"><?php echo e(Lang::get('home.landmark')); ?> <span>(Optional)</span></label>
+				<input type="text" name="landmark" value="<?php if(!empty($landmark)): ?> <?php echo e($landmark); ?> <?php endif; ?>" placeholder="<?php echo e(Lang::get('home.landmark')); ?>" class="form-control icon-field">	
+				<i class="flaticon-signpost"></i>
+				<?php echo Form::errorMsg('landmark', $errors); ?>
+
+			</div>
+		
+			<div class="form-group">
+<label for="zip"><?php echo e(Lang::get('home.zip')); ?> <span>(Optional)</span></label>
+				<input type="text" name="zip" value="<?php if(!empty($zip)): ?> <?php echo e($zip); ?> <?php endif; ?>" placeholder="<?php echo e(Lang::get('home.zip')); ?>" class="form-control icon-field">	
+				<i class="flaticon-signpost"></i>
+				<?php echo Form::errorMsg('zip', $errors); ?>
+
+			</div>
+											
+			<div class="choices-toppings__submit">
+				<button class="btn btn-primary btn-lg " id="product_skeleton_submit" type="submit">Submit</button>
+			</div>                                                            
+			<?php echo Form::close(); ?>
+
+		</div>                                                                                                                    
+	</div>							                
+</div>
+<?php $__env->stopSection(); ?>
+<script type="text/javascript">
+$(document).ready(function(){		
+	$("form.addnewaddressbook").find('.selector').filter('input').attr('disabled', true);
+	$("form.updateaddress").find('.selector').filter('input').attr('disabled', true);
+});
+</script>
+
+<?php echo $__env->make('publicLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

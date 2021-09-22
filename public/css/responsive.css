@@ -1,0 +1,95 @@
+@media only screen and (max-width:995px) {
+.restro-list-home li{margin-bottom:30px}
+}
+@media only screen and (max-width:767px) {
+.field-cont.food-field{padding-right:0}
+.border-right{border-right:0}
+}
+.step-box{margin-bottom:30px}
+.checkout-tab .nav-tabs li a .heading{font-size:22px}
+.checkout-tab .nav-tabs li{padding:0 4%}
+.checkout-tab .nav-tabs li a span{font-size:16px}
+.menu-item-data .col-md-7{width:58.3333%;float:left}
+.menu-item-data .col-md-3{width:25%;float:left}
+.menu-item-data .col-md-2{width:16.6667%;float:left}
+@media only screen and (max-width:767px) {
+a.logo{display:block;width:160px;margin:0 auto}
+a.logo img{width:100%}
+header{padding-top:10px}
+.top-link.text-right{text-align:center;margin:25px 0 0}
+.banner-data h2{font-size:40px}
+.banner-data h4{font-size:18px}
+.banner-data h2{font-size:30px;font-weight:700}
+.btn-srch{position:relative;width:100%}
+.mobile-app-img{width:300px;margin:0 auto}
+.app-sec-data{text-align:center;margin-bottom:30px}
+.footer-bottom p{margin:10px 0 0;text-align:center!important}
+.restro-list-data{padding:0}
+.restro-thumb{position:relative}
+.restro-menu-btn{top:20px}
+.restro-list-bottom li{display:block;position:relative;width:100%}
+.restro-list{margin:30px 0 0}
+.restro-list-bottom .rating-star-cont{position:relative;top:0;float:left;margin:8px 0 0}
+.restro-list-bottom .rating-count{position:relative;right:0;bottom:0;float:left;margin:5px 0 0 15px}
+.restro-list-bottom .rating-text{position:relative;float:left;right:0;bottom:0;margin:10px 0 0 10px}
+.checkout-tab .nav-tabs li.or-sm::after{display:none}
+.checkout-tab .nav-tabs li{width:100%}
+.cart-total-summry .col-sm-6{width:50%;float:left}
+.page-data-header{padding:15px 10px}
+.faq-outer{padding:0 10px 10px}
+.faq-outer .panel-heading a{font-size:16px}
+.page-data-outer h5{font-size:18px}
+e
+.faq-outer .panel-heading a{padding-right:45px}
+.menu-item-data .col-md-7{float:left;width:100%}
+.menu-item-data .col-md-3{width:50%;float:left}
+.menu-item-data .col-md-2{width:50%;float:left}
+.menu-item-left{float:none;width:100%}
+.menu-item-list ul li{display:inline-block;padding-right:20px}
+.restro-menu-tab{padding:20px 10px}
+.menu-item-list{border-bottom:1px solid #ddd;margin-bottom:20px}
+.menu-item-data{border-left:0 none;float:none;padding:0;width:100%}
+ul.restro-tab-btn li{display:inline-block;margin:0}
+ul.restro-tab-btn li a{background-position:15px center;background-repeat:no-repeat;color:#acacac;display:block;font-size:18px;line-height:32px;padding:10px}
+ul.restro-tab-btn li a i::before{font-size:18px}
+.reviews-list .single-review .review-user-thumb{height:60px;width:60px}
+.reviews-list .single-review{padding:20px 15px 20px 85px}
+.reviews-list .single-review h4{font-size:20px}
+.reviews-list .single-review .re-date{font-size:13px}
+.reviews-list .single-review p{font-size:13px;line-height:20px}
+.reviews-list{margin:-30px -10px}
+.data-padding{padding:10px}
+.data-padding p{color:#aaa;font-size:13px}
+.data-padding ul{font-size:13px}
+.page-data-outer{padding:40px 10px}
+.thanks-page .icon-cont i::before{font-size:90px;line-height:100px}
+.thanks-page h3{font-size:30px}
+.contact-info li a{font-size:13px}
+.page-data-outer p{font-size:13px}
+}
+@media only screen and (max-width: 479px) {
+.top-link li{margin-left:5px}
+.food-order-cont{margin:30px 0 0}
+.banner-data{margin-top:50px}
+.banner-bottom{font-size:15px}
+.list-outer li{width:50%}
+.email-subscribe-cont{height:auto}
+.email-subscribe-cont .btn-es{position:relative;width:100%;border-radius:5px;margin:10px 0 0}
+.single-restro{padding:20px}
+.restro-menu-btn{position:absolute;right:0;top:20px;width:auto;height:35px;line-height:35px;padding:0 10px;font-size:16px}
+.top-link li{margin-bottom:15px}
+.home-banner{padding:40px 0}
+section h3{font-size:22px;font-weight:700;margin:0 0 30px}
+section{padding:55px 0}
+.redeem-coupan .sbmt-btn-abs,.captcha-field .sbmt-btn-abs{border-radius:4px;margin:10px 0 0;position:relative;width:100%}
+}
+@media only screen and (max-width: 350px) {
+.banner-data h2{font-size:23px}
+.top-link li a{font-size:15px}
+.top-link li a i:before{margin-right:3px;font-size:13px}
+.top-link li{margin-left:0}
+.top-link.text-right{text-align:center;margin:0 -10px}
+.banner-bottom{height:auto}
+.banner-bottom a{color:#fff;font-size:16px;background:#393737;padding:0 10px;margin-left:10px;display:block}
+.mobile-app-img{width:100%}
+}

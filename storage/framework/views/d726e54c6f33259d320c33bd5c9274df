@@ -1,0 +1,246 @@
+<?php use App\Image; ?>
+
+<?php $__env->startSection('title', trans('admin.driver.list')); ?>
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.driver.manager')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+							
+
+						<?php echo Form::open(array('role' => 'form','class'=>'filter-form','url' => 'admin/driver')); ?>
+
+						<table class="table table-responsive filter-inner-form" cellspacing="0" width="100%">
+							<tr>
+								<td>
+									<select name="paginate_limit" class="paginate_limit">							
+										<?php foreach(Config::get('constants.paginate_limit_option') as $limitOption): ?>)
+											<option value="<?php echo e($limitOption); ?>" <?php if(session('filter.paginate_limit')==$limitOption): ?> selected <?php endif; ?>><?php echo e($limitOption); ?></option>
+										<?php endforeach; ?>
+									</select>
+									<input type="text" placeholder="Name" name="search" value="<?php echo e(session('filter.search')); ?>">
+									<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+								</td>
+								<td>
+									<a href="<?php echo e(url('admin/driver')); ?>/add" class="btn btn-primary btn-md">
+									+ <?php echo e(trans('admin.add')); ?>
+
+									</a>
+								</td>
+							</tr>
+						</table>
+						<?php echo Form::close(); ?>
+
+
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>					           
+					            <th><?php echo e(trans('admin.image')); ?></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/driver?sorting=<?php echo e($filter['sort']); ?>&amp;field=first_name"><?php echo e(trans('admin.name')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/driver?sorting=<?php echo e($filter['sort']); ?>&amp;field=email"><?php echo e(trans('admin.email')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/driver?sorting=<?php echo e($filter['sort']); ?>&amp;field=contact_number"><?php echo e(trans('admin.contact.number')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/driver?sorting=<?php echo e($filter['sort']); ?>&amp;field=created_at"><?php echo e(trans('admin.created')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/driver?sorting=<?php echo e($filter['sort']); ?>&amp;field=status"><?php echo e(trans('admin.status')); ?></a></th>
+					            <!-- vijayanand -->
+					            <!-- <th><a href="<?php echo e(URL::to('/')); ?>/admin/driver?sorting=<?php echo e($filter['sort']); ?>&amp;field=verified"><?php echo e('verified'); ?></a></th> -->
+					            <th><?php echo e('verified'); ?></th>
+					           	<th><?php echo e(trans('admin.location')); ?></th>
+					            <th><?php echo e(trans('admin.action')); ?></th>
+					        </tr>
+					    </thead>
+
+					    <tbody>
+
+					    	<?php if($data!=null && count($data['user_data']) > 0): ?>
+					    		<?php $i = 0; ?>
+						    	<?php foreach($data['user_data'] as $user): ?>
+						    		<?php $i++; ?>
+						        <tr id="list_data<?php echo e($user->id); ?>" <?php if($i%2==0): ?> style="background-color: #f9f9f9;" <?php else: ?> style="background-color: #FFFFFF;" <?php endif; ?>>					        	
+									<td>
+							         	<?php if($user->profile_image !=''): ?>
+						            		<img src="<?php echo e($user->profile_image); ?>" alt="logo" width="50">	
+						            	<?php else: ?>
+						            		 <span class="glyphicon glyphicon-user"></span>
+						            	<?php endif; ?>
+						            </td>
+						            <td><?php echo e(ucfirst($user->first_name).' '.ucfirst($user->last_name)); ?></td>
+						            <td><a href="mailto:<?php echo e($user->email); ?>"><?php echo e($user->email); ?></a></td>
+						            <td><?php echo e($user->contact_number); ?></td>
+						            <td><?php echo e($user->created_at); ?></td>	
+									<td>
+						             	<?php if($user->status == 1): ?>
+						            		<?php echo e(trans('admin.active')); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e(trans('admin.inactive')); ?>
+
+						            	<?php endif; ?>
+						            </td>
+						            <!-- vijayanand -->
+						            <td>
+						            	<!-- <?php echo e('yes'); ?> -->
+						             	<?php if($user->verified == 1): ?>
+						            		<?php echo e('yes'); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e('no'); ?>
+
+						            	<?php endif; ?>
+						            </td>
+
+
+						            <td>
+						            	<a href="#" class="link location" data-lat="<?php echo e($user->last_lat); ?>" data-long="<?php echo e($user->last_long); ?>" data-name="<?php echo e(ucfirst($user->first_name).' '.ucfirst($user->last_name)); ?>" data-phone="<?php echo e($user->contact_number); ?>" data-email="<?php echo e($user->email); ?>" data-seen="<?php echo e($user->updated_at->format('M d, Y') .' at '. $user->updated_at->format('H:i a')); ?>">View</a>
+						            </td>
+						            <td>
+						            	<span class="glyphicon glyphicon-plus-sign view-action md-icon-link" data-id="<?php echo e($user->id); ?>" style="cursor:pointer;"></span>&nbsp;&nbsp;
+						            	<a href="<?php echo e(url('admin/driver').'/edit/'.$user->id); ?>">
+						            		<span class="glyphicon glyphicon-pencil md-icon-link" style="cursor:pointer;" data-id="<?php echo e($user->id); ?>"></span>
+						            	</a>&nbsp;&nbsp;
+						            	<a href="<?php echo e(url('admin/address').'/'.$user->id); ?>" class="fa fa-map-marker lg-icon-link" alt="<?php echo e(trans('admin.address.list')); ?>" title="<?php echo e(trans('admin.address.list')); ?>"></a>&nbsp;&nbsp;
+						            	<span class="glyphicon glyphicon-remove delete-action md-icon-link" data-id="<?php echo e($user->id); ?>" data-controller="driver" style="cursor:pointer;"></span>
+						            </td>
+						        </tr>
+
+						        <tr style="display:none;" id="view_data<?php echo e($user->id); ?>">
+						        	<td colspan="8">
+						        		<table class="table-responsive" cellspacing="0" width="100%">
+						        			<tr>
+						        				<td><strong><?php echo e(trans('admin.driver.id')); ?> :</strong> <?php echo e($user->id); ?></td>
+						        				<td><strong><?php echo e(trans('admin.name')); ?> :</strong> <?php echo e(ucfirst($user->first_name).' '.ucfirst($user->last_name)); ?></td>
+						         			</tr>
+						         			<tr>
+						         				<td><strong><?php echo e(trans('admin.contact')); ?> :</strong> <?php echo e($user->contact_number); ?></td>
+						        				<td><strong><?php echo e(trans('admin.email')); ?> :</strong> <?php echo e($user->email); ?></td>
+						        			</tr>
+						          			<tr>	
+						         				<td><strong><?php echo e(trans('admin.created')); ?> :</strong> <?php echo e($user->created_at); ?></td>
+						        				<td><strong><?php echo e(trans('admin.status')); ?> :</strong>
+						        				<?php if($user->status == 1): ?>
+								            		<?php echo e(trans('admin.active')); ?>
+
+								            	<?php else: ?>
+								            		<?php echo e(trans('admin.inactive')); ?>
+
+								            	<?php endif; ?></td>						        			       			
+						        			</tr>
+						        		</table>
+						        	</td>	
+						        </tr>
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="8" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+					        <tr>
+					        	<?php if($data != null): ?>
+					        	<td colspan="8">
+					        		<?php echo $data['user_data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+					        	</td>
+					        	<?php endif; ?>
+					        </tr>
+					    </tbody>
+						</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="locationMapModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Driver Location</h4>
+      </div>
+      <div class="modal-body">
+      	<div id="googleMap"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=<?php echo e(Config::get('constants.google_api_key')); ?>"></script>
+<script type="text/javascript">
+jQuery(function($){
+	var json;
+	$('.location').click(function(e){
+		e.preventDefault();
+		$('#locationMapModel').modal({
+			show: true,
+			keyboard: false,
+			backdrop: 'static'
+		});
+
+		json = {
+			lat: $(this).data('lat'),
+			long: $(this).data('long'),
+			name: $(this).data('name'),
+			email: $(this).data('email'),
+			phone: $(this).data('phone'),
+			seen: $(this).data('seen')
+		}
+	});
+
+	$('#locationMapModel').on('shown.bs.modal', function(){
+		myMap( json );
+	});
+});
+
+function myMap(json)
+{
+	if( !json.lat ) {
+		$('#googleMap').css('height', 'auto').html('No location found in database.');
+		return;
+	}
+
+	$('#googleMap').css('height', '400px');
+	var mapProp = {
+	    center: new google.maps.LatLng(json.lat, json.long),
+	    zoom: 15
+	};
+
+	// Initialize map
+	var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+	// Show marker
+	var marker = new google.maps.Marker({position: mapProp.center});
+	marker.setMap(map);
+
+	// Show infowindow
+	var infowindow = new google.maps.InfoWindow({
+	    content: '<b> Name: </b>' + json.name + '<br><br>' + 
+	    	'<b> Email: </b>' + json.email + '<br><br>' + 
+	    	'<b> Phone: </b>' + json.phone + '<br><br>' + 
+	    	'<b> Last seen: </b>' + json.seen
+	});
+
+  	infowindow.open(map, marker);
+
+  	google.maps.event.addListener(marker, 'click', function() {
+  		infowindow.open(map, marker);
+  	});
+}
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

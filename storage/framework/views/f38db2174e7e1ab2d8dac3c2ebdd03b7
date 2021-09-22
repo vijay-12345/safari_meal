@@ -1,0 +1,211 @@
+<?php  
+use App\City, App\Product, App\Order;
+?>
+
+<?php $__env->startSection('title', Lang::get('common.title')); ?>
+<?php $__env->startSection('content'); ?>
+
+
+<script type="text/javascript" src="<?php echo e(asset('js/jquery-1.11.3.min.js')); ?>"></script>
+
+<?php 
+  $cart = new App\Cart;
+?>
+<?php if(Session::has('Successmessage')): ?>
+	<div class="alert alert-success">
+	   <?php echo e(Session::pull('Successmessage')); ?>
+
+	</div>
+<?php endif; ?>
+<?php if(Session::has('Errormessage')): ?> 
+	<div class="alert alert-danger">
+	   <?php echo e(Session::pull('Errormessage')); ?>
+
+	</div>
+<?php endif; ?>
+
+<div class="inner-page-data">
+    <div class="container">
+		    <div class="menu-restro">
+          
+            <div class="restro-list-data">
+      				  <?php
+      				      $restaurantImage	= !is_null($restaurantdetails->image)?$restaurantdetails->image->logo_location:'images/default-restaurantlog.png';
+      				  ?>
+                <!-- <?php echo e($restaurantdetails->id); ?> -->
+                <div class="restro-thumb" style="background: #fff url('<?php echo e(url($restaurantImage)); ?>');"></div>
+                <div class="title">
+                     <!--<a href="#" title="<?php echo e($restaurantdetails->company); ?>"><?php echo e($restaurantdetails->company); ?></a>-->
+                </div>                                          
+                <p><?php echo e($restaurantdetails->name); ?></p> 
+                
+                <div class="restro-list-bottom">
+                    <ul class="list-inline">
+                        <?php 
+                            $timingstatus = "";
+                            $flag_close   = false;
+                            $currenttime  = strtotime(__dateToTimezone('', date('H:i:s'), 'H:i:s'));
+                            $opentime     = strtotime($restaurantdetails->open);
+                            $closetime    = strtotime($restaurantdetails->closing);
+                            if($currenttime < $opentime) {
+                                $timediff = ($opentime - $currenttime);
+                                // $fsd = explode(":",date("H:i", $timediff));
+                                $hours = floor($timediff / 3600);
+                                $minutes = floor(($timediff / 60) % 60);
+                                $timingstatus .= Lang::get('home.Opens.in');
+                                if($hours != 0) $timingstatus .=' '.$hours.'h';
+                                if($minutes !=0) $timingstatus .=' '.$minutes.'min';
+                                $flag_close = true;                 
+                            } else if($restaurantdetails->open==0) {
+                                $flag_close = true;
+                                $timingstatus =  Lang::get('home.Today').' '.Lang::get('home.Closed').'.';
+                            } else if($currenttime>$opentime && $currenttime < $closetime) {
+                                $timingstatus =  Lang::get('home.Open.');
+                            } else {
+                                $timingstatus =  Lang::get('home.Closed').'.';
+                                $flag_close = true;
+                            }                            
+                        ?>
+                        
+                        <li><div class="restro-time">
+                              <?php if($timingstatus == 'Open.'): ?>
+                                <i class="flaticon-time green-watch"></i>
+                              <?php else: ?>
+                                <i class="flaticon-time red-watch"></i>
+                              <?php endif; ?>
+                              <?php /* */ echo $timingstatus ;/* */ ?>
+                          </div>
+                        </li>
+                        
+                        <li class="clearfix">
+                            <div class="rating-star-cont">
+                                <span class="rating-static rating-<?php echo e($restaurantdetails->rating*10); ?>"></span>
+                            </div>
+                            <span class="rating-count"><?php echo e($restaurantdetails->rating); ?></span>
+                            <span class="rating-text"><?php echo e(Lang::get('home.Rating')); ?></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div><!--/single restro-->
+
+
+         <div class="sidebar-data">
+            <div class="row">
+              <div class="col-md-1">
+              </div>
+              <div class="col-md-10">
+              <?php echo Form::open(['class'=>'filter-form admin-table-add','url' => '/table/add']); ?>
+
+              <input type="hidden" name="restaurant_id" value="<?php echo e($restaurantdetails->id); ?>" >
+              <?php if(Auth::user()): ?>
+                <input type="hidden" name="customer_id" value="<?php echo e(Auth::id()); ?>" >
+              <?php endif; ?>
+
+              <?php if(Session::has('flash_message')): ?>
+                  <div class="alert alert-success">
+                      <?php echo e(Session::pull('flash_message')); ?>     
+                  </div>
+              <?php endif; ?>
+
+              <?php if($errors->any()): ?>
+                  <div class="alert alert-danger">
+                      <?php foreach($errors->all() as $error): ?>
+                          <p><?php echo e($error); ?></p>
+                      <?php endforeach; ?>
+                  </div>
+              <?php endif; ?>
+
+              <div class="page-data-right">
+                <div class="page-title">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h3><?php echo e(trans('home.book.table')); ?></h3>
+                    </div>
+                  </div>
+                </div>
+                  
+                <div class="row">
+                  <div class="col-md-10">
+                    <div class="panel panel-default">
+                      <div class="panel-body">                  
+                        <div class="table-responsive">
+
+                          <table class="table table-bordered no-margin">
+                          <tr>
+                              <td><h5><?php echo e(trans('home.customer.name')); ?>:</h5></td>
+                              <td>
+                                <input type="text" name="customer_name" id="customer_name" value="" placeholder="<?php echo e(trans('home.customer.name')); ?>" class="form-control" autocomplete="off">
+                              </td>
+                            </tr>  
+                            <tr>
+                              <td><h5><?php echo e(trans('home.customer.contact')); ?>:</h5></td>
+                              <td>
+                                <input type="text" name="customer_contact" id="customer_contact" value="" placeholder="<?php echo e(trans('home.customer.contact')); ?>" class="form-control" autocomplete="off">
+                              </td>
+                            </tr>
+                            <tr>
+                              <td><h5><?php echo e(trans('home.total.person')); ?>:</h5></td>
+                              <td>
+                                <input type="number" name="total_person" id="total_person" value="" placeholder="<?php echo e(trans('home.total.person')); ?>" class="form-control" autocomplete="off">
+                              </td>
+                            </tr>
+                            <tr> 
+                              <td><h5><?php echo e(trans('home.book.date')); ?>:</h5></td>
+                              <td>  
+                                <input type="text" name="book_date" id="book_date" value="" placeholder="<?php echo e(trans('home.book.date')); ?>" class="form-control" autocomplete="off">
+                              </td>
+                            </tr> 
+                            <tr>
+                              <td><h5><?php echo e(trans('home.book.time')); ?>:</h5></td>
+                              <td>  
+                               <!-- <input type="time" name="book_time" id="book_time" value="" placeholder="<?php echo e(trans('home.book.date')); ?>" class="form-control" autocomplete="off">-->
+                                <select name="book_time" class="form-control">
+                                    <?php 
+                                        $startTimeInterval = 60*60;
+                                        $open = strtotime($restaurantdetails->open);
+                                        $close = strtotime($restaurantdetails->closing);
+                                        while($open<$close){
+                                            echo "<option value='".date('H:i',$open).' - '.date('H:i',$open+$startTimeInterval)."'>".date('H:i',$open)." - ".date('H:i',$open+$startTimeInterval)."</option>";
+                                            $open = $open+$startTimeInterval;
+                                        } 
+                                    ?>
+                                </select>
+                                
+                              </td>
+                            </tr>  
+                            <tr>
+                              <td>
+                                <?php if(Auth::user()): ?>
+                                  <input type='button' name="table_save_button" id="admin_table_add" value="<?php echo e(trans('home.book.table')); ?>" class="form-control btn btn-primary"/>
+                                <?php else: ?>
+                                  <a href="<?php echo e(url('/auth/login')); ?>" data-target="#LoginPop" data-toggle="modal"><input type='button' name="table_save_button"  value="<?php echo e(trans('home.book.table')); ?>" class="form-control btn btn-primary"/></a>
+                                <?php endif; ?>
+                                
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                  </div>
+                </div>
+          
+          <!-- <div class="row" id="order_restaurant_search_result">
+            <!-- ajax restaurent search result -->
+         <!-- </div> -->
+          
+        </div>
+        <?php echo Form::close(); ?>
+
+    </div>
+</div>
+
+<?php $__env->stopSection(); ?>
+
+
+<?php echo $__env->make('innerpageLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

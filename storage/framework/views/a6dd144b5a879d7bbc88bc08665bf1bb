@@ -1,0 +1,117 @@
+<?php $__env->startSection('title', trans('admin.reports.payout').' - '.$restaurant->name); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<?php echo e(trans('admin.reports.payout')); ?>
+
+						</div>
+
+						<div class="panel-body">
+							<?php if(Session::has('success')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(session('success')); ?>	   
+							    </div>
+							<?php endif; ?>
+							
+							<form action="" method='get' id='filterForm'>
+							    <input type="hidden" name="page" value="1" id='page'>
+								<table class="table table-responsive filter-inner-form">
+									<tr>
+										<td colspan="3">
+											<input type="text" name="start_date" id="start_date" value="<?php echo e(Request::get('start_date')); ?>" class='datepicker' placeholder="Start Date">
+											<input type="text" name="end_date" id="end_date" value="<?php echo e(Request::get('end_date')); ?>" class='datepicker' placeholder="End Date">
+											
+											<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+											<button type="button" id="reset" class="btn btn-primary" value="<?php echo e(trans('admin.reset')); ?>"><?php echo e(trans('admin.reset')); ?></button>
+											
+										</td>
+									</tr>
+								</table>
+							</form>
+
+							<!-- <?php echo e(print_r($data)); ?> -->
+
+							<?php if( $data->total() ): ?>
+			                    <p><?php echo e('Showing '.$data->firstItem().'-'.$data->lastItem().' of '.$data->total()); ?></p>
+			                <?php endif; ?>
+
+			                <div class='table-responsive'>
+								<table class="table table-striped">
+									<thead>
+									    <tr>
+										    <th>Restaurant</th>
+										    <th>Amount</th>
+										    <th>Date</th>
+									    </tr>
+									</thead>
+									<tbody>
+										<?php if( $data->isEmpty() ): ?>
+											<tr>
+												<td colspan="3">No records found.</td>
+											</tr>
+										<?php else: ?>
+											<?php foreach($data as $key => $val): ?>
+												<tr>
+													<td><?php echo e($val->name); ?></td>
+													<td>&#8377; <?php echo e((float) $val->amount); ?></td>
+													<td><?php echo e(date('M d, Y', strtotime($val->created_at)).' at '.date('H:i a', strtotime($val->created_at))); ?></td>
+												</tr>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</tbody>
+								</table>
+							</div>
+
+							<?php echo $data->appends( Request::all() )->render(); ?>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ** Date range script ** -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+jQuery(function($){
+	$('.datepicker').datepicker({
+		dateFormat:"yy-mm",
+		defaultDate: "+1w",
+        changeMonth: true,
+        changeYear: true,
+        onClose: function(dateText, inst) { 
+            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+        }
+    });
+
+	// Reset Filter Form
+    $('#reset').click(function(){
+    	$('#filterForm .form-control').val('');
+    	$('#filterForm').submit();
+    });
+});
+
+</script>
+
+<style type="text/css">
+.ui-datepicker-calendar {
+	/*display: none;*/
+}	
+</style>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,87 @@
+<?php
+	use App\Product;
+	use App\State,App\City,App\Area;
+	use App\Order;
+	$order=(new Order())->getOrderFullDetailsByOrderNumber($ordernum);	
+	$cart = new App\Cart;
+?>
+
+
+<?php $__env->startSection('title', 'Thanks'); ?>
+<?php $__env->startSection('content'); ?>
+<?php if(Session::has('Successmessage')): ?>
+	<div class="alert alert-success">
+	   <?php echo e(Session::pull('Successmessage')); ?>
+
+	</div>
+
+<?php else: ?>
+	<?php if(Session::has('Errormessage')): ?> 
+		<div class="alert alert-danger">
+		 <?php echo e(Session::pull('Errormessage')); ?>
+
+		</div>
+	<?php endif; ?>
+<?php endif; ?>
+<?php 
+	Session::pull('Successmessage');
+	Session::pull('Errormessage');
+?>
+<body class="inner-page">
+<div class="inner-page-header">
+	<div class="container">
+	<div class="row">
+	<div class="col-md-9">
+		<div class="breadcrumbs-cont">
+			<p><a href="<?php echo e(url('/')); ?>" title="">Home</a> / <a href="#" title="">Restaurants</a> / Buy</p>
+		</div>
+		</div>
+		<div class="col-md-3">
+
+		</div>
+		</div>
+	</div>
+</div>
+<div class="inner-page-data">
+	<div class="container">
+
+		<div class="sidebar-data">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-data-right">
+						<div class="page-data-outer">
+							<div class="row">
+								<div class="col-md-8 col-md-offset-2">
+									<div class="thanks-page text-center">
+										<div class="icon-cont"><i class="flaticon-smiley"></i></div>
+										<h3><?php echo e(Lang::get('proceedtocheckout.thanks_for_order')); ?></h3>
+										<h5><?php echo e(Lang::get('proceedtocheckout.your_order_code')); ?> <?php echo e($ordernum); ?> </h5>
+										
+										<?php if($paymentmethod == 'evc'): ?>
+										<h4>Dial the code below to make the payment</h4>
+										<input class="btn btn-primary btn-lg" style="margin-top: 10px;" type="button" value="*712*618000165*<?php echo e(str_replace('.', '*', $cart->getTotal( $cart->getOrderType() ))); ?>#"/>
+										<?php endif; ?>
+										
+										
+										<p style="color: black; padding-top: 34px;"><?php echo e(Lang::get('proceedtocheckout.confirm_order_message')); ?></p>
+										<ul class="list-inline contact-info">
+											<li><a href="#" title=""><i class="flaticon-telephone"></i><?php echo e(\Config::get('constants.administrator.mobile')); ?></a></li>
+											<li><a href="#" title=""><i class="flaticon-letter"></i><?php echo e(\Config::get('constants.administrator.email')); ?></a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>		
+			</div>
+		</div>
+	</div>
+</div><!--/inner page data-->
+
+</body>
+<?php $cart->clearcart(); ?>
+<?php $__env->stopSection(); ?>
+
+
+<?php echo $__env->make('publicLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

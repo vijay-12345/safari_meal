@@ -1,0 +1,135 @@
+<?php
+$prefix = \Request::segment(2);
+
+if(Session::get('access.role') == 'admin'){?>
+	<ul>
+		<li><a href="<?php echo url('admin/dashboard'); ?>" title=""><?php echo e(trans('admin.dashboard')); ?><span class="flaticon-arrows-1"></span></a></li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['restaurant','coupon','review'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['restaurant','coupon','review'])) echo true; ?>">Restaurants <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url('admin/restaurant'); ?>"><?php echo e(trans('admin.restaurant.details')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/review'); ?>"><?php echo e(trans('admin.review')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/coupon'); ?>"><?php echo e(trans('admin.coupons')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>	
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['order'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['order'])) echo true; ?>">Orders<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url('admin/order'); ?>"><?php echo e(trans('admin.order.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/order/add'); ?>"><?php echo e(trans('admin.add.order')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['areamanager','customer','driver'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['areamanager','customer','driver'])) echo true; ?>">Users <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<!--<li><a href="<?php echo url('admin/areamanager'); ?>"><?php echo e(trans('admin.area.manager')); ?><span class="flaticon-arrows-1"></span></a></li>-->
+			<li><a href="<?php echo url('admin/customer'); ?>"><?php echo e(trans('admin.customer')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/driver'); ?>"><?php echo e(trans('admin.driver')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['cuisine','menu'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['cuisine','menu'])) echo true; ?>">Category <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url('admin/cuisine'); ?>"><?php echo e(trans('admin.cuisine')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/menu'); ?>">Menu<span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['addon_group'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['addon_group'])) echo true; ?>">Addon Group <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url('admin/addon_group'); ?>"><?php echo e(trans('admin.group.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/addon_group/add'); ?>"><?php echo e(trans('admin.add.group')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>	
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['product'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['product'])) echo true; ?>">Products<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url('admin/product'); ?>"><?php echo e(trans('admin.product.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/product/add'); ?>"><?php echo e(trans('admin.add.product')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php echo e(Request::segment(3) == 'reports' ? 'open' : ''); ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php echo e(Request::segment(3) == 'reports'? true : ''); ?>"><?php echo e(trans('admin.reports.reports')); ?><span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+				<li><a href="<?php echo e(url('admin/reports/payment')); ?>"><?php echo e(trans('admin.reports.payment')); ?></a></li>
+				<li><a href="<?php echo e(url('admin/reports/customer')); ?>"><?php echo e(trans('admin.reports.customer')); ?></a></li>
+				<li><a href="<?php echo e(url('admin/reports/sales')); ?>"><?php echo e(trans('admin.reports.sales')); ?></a></li>
+				<li><a href="<?php echo e(url('admin/reports/restaurant')); ?>"><?php echo e(trans('admin.reports.restaurant')); ?></a></li>
+				<li><a href="<?php echo e(url('admin/reports/driver')); ?>"><?php echo e(trans('admin.reports.driver')); ?></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['page','newsletter'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"  aria-expanded="<?php if(in_array(Request::segment(3),['page','newsletter'])) echo true; ?>">Other <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url('admin/newsletter'); ?>"><?php echo e(trans('admin.newsletter')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url('admin/page'); ?>"><?php echo e(trans('admin.cms')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+	</ul>
+	<?php
+}elseif(Session::get('access.role') == 'manager'){
+?>
+	<ul>
+		<li><a href="<?php echo url($prefix.'/dashboard'); ?>" title=""><?php echo e(trans('admin.dashboard')); ?><span class="flaticon-arrows-1"></span></a></li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['restaurant','coupon','review'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['restaurant','coupon','review'])) echo true; ?>">Restaurants <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/restaurant'); ?>"><?php echo e(trans('admin.restaurant.details')); ?><span class="flaticon-arrows-1"></span></a></li>		
+			<li><a href="<?php echo url($prefix.'/review'); ?>"><?php echo e(trans('admin.reviews')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url($prefix.'/coupon'); ?>"><?php echo e(trans('admin.coupons')); ?><span class="flaticon-arrows-1"></span></a></li>
+			
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['areamanager','customer','driver'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['areamanager','customer','driver'])) echo true; ?>">User<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/areamanager'); ?>"><?php echo e(trans('admin.area.manager')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['order'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['order'])) echo true; ?>">Orders<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/order'); ?>"><?php echo e(trans('admin.order.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url($prefix.'/order/add'); ?>"><?php echo e(trans('admin.add.order')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['product'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['product'])) echo true; ?>">Products<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/product'); ?>"><?php echo e(trans('admin.product.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url($prefix.'/product/add'); ?>"><?php echo e(trans('admin.add.product')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>		
+	</ul>
+	<?php
+}elseif(Session::get('access.role') == 'restaurant'){
+	?>
+	<ul>
+		<li><a href="<?php echo url($prefix.'/dashboard'); ?>" title=""><?php echo e(trans('admin.dashboard')); ?><span class="flaticon-arrows-1"></span></a></li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['restaurant','coupon','review'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['restaurant','coupon','review'])) echo true; ?>">Restaurants <span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/restaurant'); ?>"><?php echo e(trans('admin.restaurant.details')); ?><span class="flaticon-arrows-1"></span></a></li>		
+			<li><a href="<?php echo url($prefix.'/coupon'); ?>"><?php echo e(trans('admin.coupons')); ?><span class="flaticon-arrows-1"></span></a></li>
+			
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['order'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['order'])) echo true; ?>">Orders<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/order'); ?>"><?php echo e(trans('admin.order.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url($prefix.'/order/add'); ?>"><?php echo e(trans('admin.add.order')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+		<li class="dropdown keep-open <?php if(in_array(Request::segment(3),['product'])) echo 'open'; ?>">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="<?php if(in_array(Request::segment(3),['product'])) echo true; ?>">Products<span class="flaticon-arrows-1"></span></a>
+			<ul class="dropdown-menu">
+			<li><a href="<?php echo url($prefix.'/product'); ?>"><?php echo e(trans('admin.product.list')); ?><span class="flaticon-arrows-1"></span></a></li>
+			<li><a href="<?php echo url($prefix.'/product/add'); ?>"><?php echo e(trans('admin.add.product')); ?><span class="flaticon-arrows-1"></span></a></li>
+			</ul>
+		</li>
+	<!-- <li><a href="<?php echo e(url($prefix.'/reports')); ?>"><?php echo e(trans('admin.reports.reports')); ?></a></li> -->
+	</ul>
+	<?php
+}
+?>

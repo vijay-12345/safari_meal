@@ -1,0 +1,7 @@
+<h1>hello</h1>
+<?php echo e($user['first_name']); ?>
+
+<?php echo e($user['last_name']); ?>
+
+
+<h2>bye</h2>

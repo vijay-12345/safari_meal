@@ -1,0 +1,72 @@
+<?php
+use App\FooterLinks;
+$footerLinks = FooterLinks::lang()->where(['status'=>1])->orderBy('sort','asc')->get();
+?>
+<footer>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="footer-widget">
+					<h4>Popular Areas</h4>
+					<ul class="list-style">
+						<?php foreach($footerLinks as $key=>$v): ?>
+							<?php if($v->item_type=='popular_areas'): ?>
+							<li><a href="<?php echo e(url($v->url)); ?>"><?php echo e($v->name); ?></a></li>
+							<?php endif; ?>
+						<?php endforeach; ?>						
+					</ul>
+				</div>
+			</div>
+
+			<div class="col-sm-3">
+				<div class="footer-widget">
+					<h4>Popular Cuisines</h4>
+					<ul class="list-style">
+						<?php foreach($footerLinks as $key=>$v): ?>
+							<?php if($v->item_type=='popular_cuisines'): ?>
+							<li><a href="<?php echo e(url($v->url)); ?>"><?php echo e($v->name); ?></a></li>
+							<?php endif; ?>
+						<?php endforeach; ?>						
+
+					</ul>
+				</div>
+			</div>
+
+			<div class="col-sm-3">
+				<div class="footer-widget">
+					<h4>Popular Restaurants</h4>
+					<ul class="list-style">
+						<?php foreach($footerLinks as $key=>$v): ?>
+							<?php if($v->item_type=='popular_restaurants'): ?>
+							<li><a href="<?php echo e(url($v->url)); ?>"><?php echo e($v->name); ?></a></li>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			</div>
+
+			<div class="col-sm-3">
+				<div class="footer-widget">
+					<h4>Safari Meals</h4>
+					<ul class="list-style">
+						<li><a href="<?php echo e(url('page/about-safarimeals')); ?>" title=""><?php echo e(trans('footer.about.foodbox')); ?></a></li>
+						<li><a href="<?php echo e(url('page/contact-us')); ?>" title=""><?php echo e(trans('footer.contact')); ?></a></li>
+						<li><a href="<?php echo e(url('page/terms-and-conditions')); ?>" title=""><?php echo e(trans('footer.terms.and.conditions')); ?></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="footer-bottom">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6">
+					<p>© <?php echo e(trans('footer.copyright')); ?> <?php echo e(date('Y')); ?> <?php echo e(trans('footer.foodbox.is.a.registered.trademark')); ?></p>
+				</div>
+				<div class="col-sm-6">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>

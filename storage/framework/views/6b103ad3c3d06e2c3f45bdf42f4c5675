@@ -1,0 +1,97 @@
+<?php $prefix = \Request::segment(2); ?>
+
+<?php if(count($data['data']) > 0): ?>
+	<?php $i = 0; ?>
+    
+	<?php foreach($data['data'] as $order): ?>
+        
+    	<?php $i++; ?>
+
+        <tr id="list_data<?php echo e($order->id); ?>">
+            <td><?php echo e($order->order_number); ?></td>
+            <td>
+                <?php echo e(date('d M Y',strtotime($order->book_date))); ?>
+
+                <!-- <?php echo e(__dateToTimezone('', $order->created_at,'g:i a')); ?> -->
+                <!-- <?php echo e(date('d M Y',strtotime($order->created_at))); ?> <?php echo e(date('g:i a',strtotime($order->created_at))); ?> -->
+            </td>
+           <!-- <td>
+            	<?php if($order->asap == 1): ?>
+                    <?php echo e(__dateToTimezone('', $order->date,'d M Y')); ?> (ASAP)
+            		<!-- <?php echo e(date('d M Y',strtotime($order->date))); ?>(ASAP) 
+            	<?php else: ?>
+                    <?php echo e(__dateToTimezone('', $order->date,'d M Y')); ?> 
+                    <?php echo e(__dateToTimezone('', $order->time,'g:i a')); ?>
+
+            		<!-- <?php echo e(date('d M Y',strtotime($order->date))); ?> <?php echo e(date('g:i a',strtotime($order->time))); ?> 
+            	<?php endif; ?>
+            </td>-->
+            <td> <?php echo e($order->book_time); ?> </td>
+            <td><?php echo e($order->restaurant_name); ?></td>
+            <td><?php echo e($order->customer_name); ?>   <!-- <?php echo e($order->customer_last_name); ?> --></td>
+             <td><?php echo e($order->customer_contact); ?></td>
+            <td><?php echo e($order->total_person); ?></td>
+            <!--<td><?php echo e(format($order->amount)); ?></td>-->
+
+            <?php if($order->status == 0 || $order->status == 1): ?>
+                <td class="torder-action" data-id="<?php echo e($order->id); ?>" data-controller="dashboard" style="cursor:pointer;">
+                    <button type="button" class="btn btn-primary" value="7">Confirmed</button>
+                    <button type="button" class="btn btn-warning" value="6">Rejected</button>
+                </td>
+            <?php elseif($order->status == 6): ?>
+                <td class="" data-id="<?php echo e($order->id); ?>" data-controller="dashboard" style="cursor:pointer;">
+                    <?php foreach(Config::get('constants.order_status_label.admin') as $key=>$value): ?>
+                        <?php if($key == $order->status): ?>
+                            <?php if($order->order_type !='delivery' && $order->status == 5): ?>
+                                <u><?php echo e(trans('admin.picked.up')); ?></u>
+                            <?php else: ?>
+                                <u><?php echo e($value); ?> </u>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </td>
+            <?php else: ?>
+                <td class="edit-action" data-id="<?php echo e($order->id); ?>" data-controller="dashboard" style="cursor:pointer;">
+                    <?php foreach(Config::get('constants.order_status_label.admin') as $key=>$value): ?>
+                        <?php if($key == $order->status): ?>
+                            <?php if($order->order_type !='delivery' && $order->status == 5): ?>
+                                <u><?php echo e(trans('admin.picked.up')); ?></u>
+                            <?php else: ?>
+                                <u><?php echo e($value); ?> </u>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </td>
+            <?php endif; ?>
+            
+            <!--<td>
+            	<?php if($order->order_type !='delivery'): ?>
+            		<?php echo e(trans('admin.order.type')); ?> : <?php echo e(trans('admin.pick.up')); ?>
+
+            	<?php else: ?>
+            		<?php echo e(trans('admin.assigned.to')); ?> <?php echo e($order->driver_name); ?>
+
+            	<?php endif; ?>
+            </td>
+
+            <td>
+                <a href="<?php echo e(url($prefix.'/order')); ?>/edit/<?php echo e($order->id); ?>">
+                    <span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-remove delete-action" data-id="<?php echo e($order->id); ?>" data-controller="order" style="cursor:pointer;">
+                </span>
+            </td>-->
+        </tr>
+
+    <?php endforeach; ?>
+
+	<?php else: ?>
+		<tr><td colspan="9" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+	<?php endif; ?>
+
+    <tr>
+    	<td colspan="9">
+            <?php echo $data['data']->appends(Request::except('_token'))->render(); ?>
+
+    		<?php // echo $data['data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+    	</td>
+    </tr>

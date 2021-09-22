@@ -1,0 +1,51 @@
+<?php $prefix = \Request::segment(2); ?>
+<header>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-5">
+				<a href="<?php echo e(url($prefix.'/dashboard')); ?>" title="" class="logo"><img src="<?php echo e(asset('images/admin-logo.png')); ?>" alt=""></a>
+			</div>
+			<div class="col-sm-7">
+				<div class="top-link text-right">
+					<ul class="list-inline">
+
+<?php echo $__env->make('admin.notification_bell', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+						<li>
+							<div class="dropdown">
+							  <a id="dLabel" data-target="#" href="<?php echo e(url($prefix.'/dashboard')); ?>" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							  	<i class="flaticon-earth"></i>
+							    <?php echo e(trans('admin.language')); ?>
+
+							    <span class="flaticon-arrows"></span>
+							  </a>
+
+							  <ul class="dropdown-menu" aria-labelledby="dLabel">
+							  	<?php foreach(Config::get('app.alt_langs') as $lang): ?>
+							  		<li><a href="<?php echo e('/'.$lang.'/'.$prefix.'/dashboard'); ?>" class="" title=""><?php echo e(Config::get('constants.language_map.'.$lang)); ?></a></li>
+							  	<?php endforeach; ?>
+							    
+							  </ul>
+							</div>
+						</li>
+						<li>
+							<div class="dropdown">
+							  <a id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							  	<i class="flaticon-round"></i>
+							    <?php echo e(ucfirst(Auth::user()->first_name).' '.ucfirst(Auth::user()->last_name)); ?>
+
+							    <span class="flaticon-arrows"></span>
+							  </a>
+
+							  <ul class="dropdown-menu" aria-labelledby="dLabel">
+							  	<!--<li><a href="#" class="" title="" onclick="alert('Under Development');">Setting</a></li>-->
+							    <li><a href="<?php echo e(url($prefix.'/logout')); ?>" class="" title="">Logout</a></li>
+							  </ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>

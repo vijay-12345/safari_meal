@@ -1,0 +1,124 @@
+<?php use App\Order; ?>
+<?php if($type== 'edit'): ?>
+	<td colspan="8">
+		
+		<?php echo Form::open(array('role' => 'form','class'=>'filter-form','id'=>'editform'.$order->id)); ?>	
+		<?php echo Form::hidden('id',$order->id); ?>		
+		<table class="table table-responsive" cellspacing="0" border="0" cellpadding="0" width="100%">
+		<tr>
+		<td><?php echo e($order->order_number); ?></td>
+		<td><?php echo e(date('d M Y',strtotime($order->date))); ?> <?php echo e(date('g:i a',strtotime($order->time))); ?></td>
+		<td> <?php echo e($order->restaurant_name); ?></td>
+		<td><?php echo e($order->remark); ?></td>
+		<td>$<?php echo e($order->amount); ?></td>					            
+		<td>
+		<select name="status" class="form-control">
+		<?php foreach(orderTypeLabel($order->order_type) as $key=>$value): ?>
+		<option value="<?php echo e($key); ?>" <?php if($key == $order->status): ?> selected <?php endif; ?>><?php echo e($value); ?></option>
+		<?php endforeach; ?>
+		</select>         	
+		</td>
+		<td class="edit-driver-status"> 
+        	<?php if($order->order_type !='delivery'): ?>
+        		<?php echo e(trans('admin.order.type')); ?> : <?php echo e(trans('admin.pick.up')); ?>
+
+        	<?php else: ?>
+        		<?php echo e(trans('admin.assigned.to')); ?> <?php echo e($order->driver_name); ?>
+
+        	<?php endif; ?>
+			<?php echo Form::select('driver_id', array('' => '---Select Driver---') + $drivers, $order->driver_id, ['class'=>'form-control']); ?>						    
+		</td>
+		<td><span class="glyphicon glyphicon-floppy-disk update-action" data-action="update" data-id="<?php echo e($order->id); ?>" data-controller="dashboard" style="cursor:pointer;" title="Save"></span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-circle update-action" style="cursor:pointer;" data-id="<?php echo e($order->id); ?>" data-action="cancel" data-controller="dashboard" title="Cancel"></span></td>
+		</tr>
+		
+		</table>
+		<?php echo Form::close(); ?>
+
+	</td>
+<?php else: ?>
+
+ 	<?php if(isset($view)): ?>
+        <td><?php echo e($order->order_number); ?></td>
+        <td><?php echo e(date('d M Y',strtotime($order->date))); ?> <?php echo e(date('g:i a',strtotime($order->time))); ?></td>
+        <td><?php echo e($order->restaurant_name); ?></td>
+        <td><?php echo e($order->remark); ?></td>
+        <td>$<?php echo e($order->amount); ?></td>					            
+        <td class="edit-action" data-id="<?php echo e($order->id); ?>" data-controller="dashboard" style="cursor:pointer;">
+		<?php foreach(Config::get('constants.order_status_label.admin') as $key=>$value): ?>
+			<?php if($key == $order->status): ?>
+			 	<?php if($order->order_type !='delivery' && $order->status == 5): ?>
+			 		<u><?php echo e(trans('admin.pick.up')); ?></u>
+			 	<?php else: ?>
+			 		<u><?php echo e($value); ?></u> 
+			 	<?php endif; ?>									 
+			<?php endif; ?>									
+		<?php endforeach; ?>						            	
+    	</td>
+        <td>
+        	<?php if($order->order_type !='delivery'): ?>
+        		<?php echo e(trans('admin.order.type')); ?> : <?php echo e(trans('admin.pick.up')); ?>
+
+        	<?php else: ?>
+        		<?php echo e(trans('admin.assigned.to')); ?> <?php echo e($order->driver_name); ?>
+
+        	<?php endif; ?>
+        </td>
+        <td><a href="<?php echo e(url($prefix.'/order')); ?>/edit/<?php echo e($order->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;<span class="glyphicon glyphicon-remove delete-action" data-id="<?php echo e($order->id); ?>" data-controller="order" style="cursor:pointer;"></span></td>
+
+ 	<?php else: ?>
+		<td colspan="8">
+			<table class="table-responsive" cellspacing="0" width="100%">
+				<tr>
+					<td><strong><?php echo e(trans('admin.order.number')); ?> :</strong> <?php echo e($order->order_number); ?></td>						        				
+					<td><strong><?php echo e(trans('admin.date')); ?> :</strong> <?php echo e(date('d M Y',strtotime($order->date))); ?> <?php echo e(date('g:i a',strtotime($order->time))); ?></td>
+	 			</tr>
+    			<tr>	
+     				<td><strong><?php echo e(trans('admin.order.type')); ?> :</strong><?php echo e($order->order_type); ?></td>
+     				<td>
+     				<?php 								         				
+     				$products = Order::select('id')->find($order->id)->items;
+     				//pr($products);
+     				foreach($products as $key=>$product){
+     					echo "<br><strong>".trans('admin.product').($key+1).":</strong>".$product->item_name;
+     					echo ", <strong>".trans('admin.unit.price')." :</strong>$".$product->item_unit_price;
+     					echo ", <strong>".trans('admin.quantity'). " :</strong>".$product->item_quantity;
+     					echo ", <strong>".trans('admin.total.cost')." :</strong>$".$product->item_total_price;							         			
+     					
+     					
+     				}
+     				?></td>						        				
+    									        			       			
+    			</tr>	 			
+	 			<tr>	
+	 				<td><strong><?php echo e(trans('admin.restaurant.name')); ?> :</strong> <?php echo e($order->restaurant_name); ?></td>						        				
+					<td><strong><?php echo e(trans('admin.remark')); ?>  :</strong> <?php echo e($order->remark); ?></td>
+				       			
+				</tr>
+				<tr>	
+	 				<td><strong><?php echo e(trans('admin.amount')); ?> :</strong> <?php echo e($order->amount); ?></td>						        				
+					<td><strong><?php echo e(trans('admin.order.status')); ?> :</strong> 								
+					<?php foreach(Config::get('constants.order_status_label.admin') as $key=>$value): ?>
+						<?php if($key == $order->status): ?>
+						 	<?php if($order->order_type !='delivery' && $order->status == 5): ?>
+						 		<?php echo e(trans('admin.picked.up')); ?>
+
+						 	<?php else: ?>
+						 		<?php echo e($value); ?> 
+						 	<?php endif; ?>									 
+						<?php endif; ?>									
+					<?php endforeach; ?>
+					</td>						        			       			
+				</tr>
+				<tr>	
+	 				<td><strong><?php echo e(trans('admin.driver.status')); ?>  :</strong> <?php echo e(trans('admin.assigned.to')); ?> <?php echo e($order->driver_name); ?></td>						        				
+					<td><strong><?php echo e(trans('admin.customer')); ?> :</strong> <?php echo e(ucfirst($order->customer_first_name).' '.ucfirst($order->customer_last_name)); ?> 								
+
+					</td>						        			       			
+				</tr>			
+
+			</table>
+		</td>
+	<?php endif; ?>   					        	
+
+
+<?php endif; ?>

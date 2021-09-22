@@ -1,0 +1,97 @@
+<?php
+use App\City;
+use App\State;
+use App\Country,App\Area;
+?>
+
+<?php $__env->startSection('title', trans('admin.address.list')); ?>
+<?php $__env->startSection('content'); ?>
+<?php $prefix = \Request::segment(2); ?>
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+				
+			</div>
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.address.list.of')); ?> <b><?php echo e(ucfirst($data['user']->first_name).' '.ucfirst($data['user']->last_name)); ?></b></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>			
+							
+							<table class="table table-responsive" cellspacing="0" width="100%">
+								<tr>
+									<td class="text-left"><a href="#" onclick="window.history.back()" class="btn btn-primary btn-md"><?php echo e(trans('admin.back')); ?></a></td>							
+									<td class="text-right"><a href="<?php echo e(url($prefix.'/address-add').'/'.$data['user']->id); ?>" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add.new')); ?></a></td>
+								</tr>
+							</table>
+							
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+						    <thead>
+						        <tr>					           
+						            <th><?php echo e(trans('admin.first.address')); ?></th>
+						            <th><?php echo e(trans('admin.second.address')); ?></th>
+						            <th><?php echo e(trans('admin.area')); ?></th>
+						            <th><?php echo e(trans('admin.zipcode')); ?></th>
+						            <th><?php echo e(trans('admin.city')); ?></th>
+						            <th><?php echo e(trans('admin.state')); ?></th>
+						            <th><?php echo e(trans('admin.country')); ?></th>	            					            
+						            <th><?php echo e(trans('admin.action')); ?></th>
+						        </tr>
+						    </thead>
+					    <tbody>
+
+					    	<?php if(count($data['data']) > 0): ?>
+					    		
+						    	<?php foreach($data['data'] as $v): ?>
+						    		
+						        <tr>					        	
+						            <td><?php echo e($v->first_address); ?></td>			
+						            <td><?php echo e($v->second_address); ?></td>
+						            <td>
+						            <?php echo e(empty($v->area)?$v->area->name:'N/A'); ?>						      	
+						            </td>		            
+						            <td><?php echo e($v->zip); ?></td>	
+						            <td>
+						            <?php echo e(empty($v->city)?$v->city->name:'N/A'); ?>						      	
+						            </td>
+						            <td>
+						            <?php echo e(empty($v->state)?$v->state->state_name:'N/A'); ?>	
+						      	    </td>
+						            <td>
+						            <?php echo e(empty($v->country)?$v->country->country_name:'N/A'); ?>						      		
+						            </td>				            							
+						            <td><a href="<?php echo e(url($prefix.'/address-edit').'/'.$v->id); ?>" class="glyphicon glyphicon-pencil md-icon-link"></a>&nbsp;&nbsp;<a href="<?php echo e(url($prefix.'/address-delete').'/'.$v->id); ?>" onclick="return confirm(".trans('admin.are.you.sure.to.delete.this').");" class="glyphicon glyphicon-remove md-icon-link"></a></td>
+						        </tr>		        
+						        
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="8" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+					    </tbody>
+						</table>
+						
+						<!-- <table class="table table-responsive" cellspacing="0" width="100%">
+							<tr>
+								<td class="text-left"><a href="#" onclick="window.history.back()" class="btn btn-primary btn-md"><?php echo e(trans('admin.back')); ?></a></td>							
+								<td class="text-right"><a href="<?php echo e(url($prefix.'/address-add').'/'.$data['user']->id); ?>" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add.new')); ?></a></td>
+							</tr>
+						</table> -->
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

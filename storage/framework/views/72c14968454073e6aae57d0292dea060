@@ -1,0 +1,43 @@
+<h1>good morning</h1>		
+<h1>good morning</h1>
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+				<h1>good morning</h1>		
+			 					
+				
+			</div>
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.add.menu')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+							<?php if($errors->any()): ?>
+							    <div class="alert alert-danger">
+							        <?php foreach($errors->all() as $error): ?>
+							            <p><?php echo e($error); ?></p>
+							        <?php endforeach; ?>
+							    </div>
+							<?php endif; ?>	
+															
+							  <?php echo Form::open(['class'=>'form-horizontal','files'=>true]); ?>	
+							  
+		   						<?php echo $__env->make('admin.menu.form2', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>    							
+				    										  	
+							  	<button type="submit" class="btn btn-primary"><?php echo e(trans('admin.submit')); ?></button>
+							<?php echo Form::close(); ?>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

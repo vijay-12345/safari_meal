@@ -1,0 +1,111 @@
+<?php $__env->startSection('title', trans('admin.reports.sales')); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<?php echo e(trans('admin.reports.sales')); ?>
+
+						</div>
+
+						<div class="panel-body">
+							<?php if(Session::has('success')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(session('success')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<form action="" method='get' id='filterForm'>
+							    <input type="hidden" name="page" value="1" id='page'>
+								<table class="table table-responsive">
+									<tr>
+										<td>
+											<input type="text" name="name" id="name" value="<?php echo e(Request::get('name')); ?>" placeholder="Restaurant Name"> &nbsp;&nbsp;
+
+											<input type="text" name="date" id="date" value="<?php echo e(Request::get('date') ? Request::get('date') : date('Y-m-d')); ?>" class='datepicker' placeholder="Date"> &nbsp;&nbsp;
+
+											<input type="submit" value="<?php echo e(trans('admin.search')); ?>">
+											<input type="button" value="<?php echo e(trans('admin.reset')); ?>" id='reset'>
+
+											<a href="<?php echo e(url('admin/reports/sales/export?name='.Request::get('name').'&date='.Request::get('date'))); ?>" class='btn btn-sm btn-default'>Export</a>
+										</td>
+									</tr>
+								</table>
+							</form>
+
+							<?php if( $data->total() ): ?>
+			                    <p><?php echo e('Showing '.$data->firstItem().'-'.$data->lastItem().' of '.$data->total()); ?></p>
+			                <?php endif; ?>
+
+			                <div class='table-responsive'>
+								<table class="table table-striped">
+									<thead>
+									    <tr>					           
+										    <th>Restaurant</th>
+										    <th>Phone</th>
+										    <th>Total Orders</th>
+										    <th><?php echo e(config('constants.order_status_label.admin.1')); ?></th>
+										    <th><?php echo e(config('constants.order_status_label.admin.2')); ?></th>
+										    <th><?php echo e(config('constants.order_status_label.admin.3')); ?></th>
+										    <th><?php echo e(config('constants.order_status_label.admin.4')); ?></th>
+										    <th><?php echo e(config('constants.order_status_label.admin.5')); ?></th>
+										    <th><?php echo e(config('constants.order_status_label.admin.6')); ?></th>
+									    </tr>
+									</thead>
+									<tbody>
+										<?php if( $data->isEmpty() ): ?>
+											<tr>
+												<td colspan="9">No records found.</td>
+											</tr>
+										<?php else: ?>
+											<?php foreach($data as $key => $val): ?>
+												<tr>
+													<td><a href="<?php echo e(url('admin/reports/restaurant?name='.$val->restaurent_urlalias)); ?>" target="_blank" title='Click to view full report'><?php echo e(trim($val->name)); ?></a></td>
+													<td><?php echo e($val->phone); ?></td>
+													<td><?php echo e((int) $val->total_orders); ?></td>
+													<td><?php echo e((int) $val->pending_orders); ?></td>
+													<td><?php echo e((int) $val->open_orders); ?></td>
+													<td><?php echo e((int) $val->accepted_orders); ?></td>
+													<td><?php echo e((int) $val->dispatched_orders); ?></td>
+													<td><?php echo e((int) $val->delivered_orders); ?></td>
+													<td><?php echo e((int) $val->cancelled_orders); ?></td>
+												</tr>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</tbody>
+								</table>
+							</div>
+
+							<?php echo $data->appends( Request::all() )->render(); ?>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+jQuery(function($){
+	$('.datepicker').datepicker({
+		dateFormat:"yy-mm-dd",
+		// defaultDate: (new Date()).getDate(),
+        changeMonth: true,
+        changeYear: true
+    });
+});	
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

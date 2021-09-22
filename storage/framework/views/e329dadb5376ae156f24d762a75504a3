@@ -1,0 +1,162 @@
+<?php $__env->startSection('title', trans('admin.reports.payment')); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<?php echo e(trans('admin.reports.payment')); ?>
+
+						</div>
+
+						<div class="panel-body">
+							<?php if(Session::has('success')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(session('success')); ?>	   
+							    </div>
+							<?php endif; ?>
+							
+							<form action="" method='get' id='filterForm'>
+							    <input type="hidden" name="page" value="1" id='page'>
+								<table class="table table-responsive filter-inner-form">
+									<tr>
+										<td colspan="3">
+											<input type="text" name="start_date" id="start_date" value="<?php echo e(Request::get('start_date')); ?>" class='datepicker' placeholder="Start Date">
+											<input type="text" name="end_date" id="end_date" value="<?php echo e(Request::get('end_date')); ?>" class='datepicker' placeholder="End Date">
+											
+											<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+											<button type="button" id="reset" class="btn btn-primary" value="<?php echo e(trans('admin.reset')); ?>"><?php echo e(trans('admin.reset')); ?></button>
+											
+											<a href="<?php echo e(url('admin/reports/payment/export?start_date='.Request::get('start_date').'&end_date='.Request::get('end_date'))); ?>" class='btn btn-primary btn-md btn-default'>Export</a>
+										</td>
+									</tr>
+									<tr>
+										<td>&#8377; <?php echo e($amount); ?> <br>
+											<strong>Total</strong>
+										</td>
+										<td align="center">&#8377; <?php echo e($commission); ?> <br>
+											<strong>Commission</strong>
+										</td>
+										<td align="right"> <?php echo e($orders); ?> <br>
+											<strong>Orders</strong>
+										</td>
+									</tr>
+								</table>
+							</form>
+							
+							<?php if( $data->total() ): ?>
+			                    <p><?php echo e('Showing '.$data->firstItem().'-'.$data->lastItem().' of '.$data->total()); ?></p>
+			                <?php endif; ?>
+			                
+			                <div class='table-responsive'>
+								<table class="table table-striped">
+									<thead>
+									    <tr>					           
+										    <th>Restaurant</th>
+										    <!-- <th>Commission %</th> -->
+										    <th>Total Orders</th>
+										    <th>Sub Total</th>
+										    <th>Total Amount</th>
+										    <th>Total Commission</th>
+										    <th>Net amount to be paid</th>
+										    <th>Amount already paid</th>
+										    <th>Amount Pending</th>
+									    </tr>
+									</thead>
+									<tbody>
+										<?php if( $data->isEmpty() ): ?>
+											<tr>
+												<td colspan="8">No records found.</td>
+											</tr>
+										<?php else: ?>
+											<?php foreach($data as $key => $val): ?>
+												<tr>
+													<td><a href="<?php echo e(url('admin/reports/payout/'.$val->restaurent_urlalias)); ?>" target='_blank'><?php echo e($val->restaurant); ?></a></td>
+													<!-- <td><?php echo e($val->admin_commission.' %'); ?></td> -->
+													<td><?php echo e((int) $val->orders); ?></td>
+													<td><?php echo e((int) $val->subtotal); ?></td>
+													<td>&#8377; <?php echo e((float) $val->amount); ?></td>
+													<td>&#8377; <?php echo e((float) $val->commission); ?></td>
+													<td>&#8377; <?php echo e((float) ($val->amount - $val->commission)); ?></td>
+													<td>&#8377; <?php echo e((float) $val->paid_amount); ?></td>
+													<td>
+														&#8377; <?php echo e((float) $val->unpaid_amount); ?> 
+														<?php if( $val->unpaid_amount > 0 ): ?>
+															<button class='btn btn-sm btn-primary pay' data-restaurant="<?php echo e($val->restaurant_id); ?>">Mark as paid</button>
+														<?php endif; ?>
+													</td>
+												</tr>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</tbody>
+								</table>
+							</div>
+
+							<?php echo $data->appends( Request::all() )->render(); ?>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ** Date range script ** -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+var json = {
+	'start_date': "<?php echo e(Request::get('start_date')); ?>",
+	'end_date': "<?php echo e(Request::get('end_date')); ?>"
+}
+
+jQuery(function($){
+	$('.datepicker').datepicker({
+		dateFormat:"yy-mm",
+		defaultDate: "+1w",
+        changeMonth: true,
+        changeYear: true,
+        onClose: function(dateText, inst) { 
+            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+        }
+    });
+
+    // Mark as paid
+    $(document).on('click', '.pay', function(){
+    	if( confirm('Are you sure you want to proceed? This action can not be undone.') )
+    	{
+    		var obj = $(this);
+	    	json.restaurant = $(this).data('restaurant');
+	    	obj.html('Please wait...').attr('disabled', true);
+			$.post(baseUrl + 'admin/reports/payment/pay', json, function(response){
+				response = $.parseJSON( response );
+				if( response.status == 'success' ) {
+					window.location.reload();
+				} else {
+					alert(response.message);
+					obj.html('Mark as paid').attr('disabled', false);
+				}
+			});
+		}
+    });
+});
+
+</script>
+
+<style type="text/css">
+.ui-datepicker-calendar {
+	display: none;
+}	
+</style>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

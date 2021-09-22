@@ -1,0 +1,133 @@
+<?php use App\Image; ?>
+
+<?php $__env->startSection('title', trans('admin.customer.list')); ?>
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading"><?php echo e(trans('admin.customer.manager')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<?php echo Form::open(array('role' => 'form','class'=>'filter-form','url' => 'admin/customer')); ?>
+
+							<table class="table table-responsive filter-inner-form" cellspacing="0" width="100%">
+								<tr>
+									<td>
+										<select name="paginate_limit" class="paginate_limit">							
+											<?php foreach(Config::get('constants.paginate_limit_option') as $limitOption): ?>)
+												<option value="<?php echo e($limitOption); ?>" <?php if(session('filter.paginate_limit')==$limitOption): ?> selected <?php endif; ?>><?php echo e($limitOption); ?></option>
+											<?php endforeach; ?>
+										</select>
+										<input type="text" placeholder="Name" name="search" value="<?php echo e(session('filter.search')); ?>">
+										<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+									</td>
+									<td>
+										<a href="<?php echo e(url('admin/customer')); ?>/add" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add')); ?></a>
+									</td>
+								</tr>
+							</table>
+							<?php echo Form::close(); ?>
+
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>					           
+					            <th><?php echo e(trans('admin.image')); ?></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/customer?sorting=<?php echo e($filter['sort']); ?>&amp;field=first_name"><?php echo e(trans('admin.name')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/customer?sorting=<?php echo e($filter['sort']); ?>&amp;field=email"><?php echo e(trans('admin.email')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/customer?sorting=<?php echo e($filter['sort']); ?>&amp;field=contact_number"><?php echo e(trans('admin.contact.number')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/customer?sorting=<?php echo e($filter['sort']); ?>&amp;field=created_at"><?php echo e(trans('admin.created')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/admin/customer?sorting=<?php echo e($filter['sort']); ?>&amp;field=status"><?php echo e(trans('admin.status')); ?></a></th>
+					            <th><?php echo e(trans('admin.action')); ?></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+
+					    	<?php if(count($data['user_data']) > 0): ?>
+					    		<?php $i = 0; ?>
+						    	<?php foreach($data['user_data'] as $user): ?>
+						    		<?php $i++; ?>
+						        <tr id="list_data<?php echo e($user->id); ?>" <?php if($i%2==0): ?> style="background-color: #f9f9f9;" <?php else: ?> style="background-color: #FFFFFF;" <?php endif; ?>>					        	
+									<td>
+							         	<?php if($user->profile_image !=''): ?>
+						            	<img src="<?php echo e($user->profile_image); ?>" alt="logo" width="50">						            	
+						            	<?php else: ?>
+						            		 <span class="glyphicon glyphicon-user"></span>
+						            	<?php endif; ?>	            
+						            	
+						            </td>						            
+						            <td><?php echo e(ucfirst($user->first_name).' '.ucfirst($user->last_name)); ?></td>
+						            <td><?php echo e($user->email); ?></td>
+						            <td><?php echo e($user->contact_number); ?></td>
+						            <td><?php echo e($user->created_at); ?></td>	
+									<td>
+						             	<?php if($user->status == 1): ?>
+						            		<?php echo e(trans('admin.active')); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e(trans('admin.inactive')); ?>
+
+						            	<?php endif; ?></td>		            							
+						            <td><span class="glyphicon glyphicon-plus-sign view-action md-icon-link" data-id="<?php echo e($user->id); ?>" style="cursor:pointer;"></span>&nbsp;&nbsp;<a href="<?php echo e(url('admin/customer').'/edit/'.$user->id); ?>"><span class="glyphicon glyphicon-pencil md-icon-link" style="cursor:pointer;" data-id="<?php echo e($user->id); ?>"></span></a>&nbsp;&nbsp;<a href="<?php echo e(url('admin/address').'/'.$user->id); ?>" class="fa fa-map-marker lg-icon-link" alt="<?php echo e(trans('admin.address.list')); ?>" title="<?php echo e(trans('admin.address.list')); ?>"></a>&nbsp;&nbsp;<span class="glyphicon glyphicon-remove delete-action md-icon-link" data-id="<?php echo e($user->id); ?>" data-controller="customer" style="cursor:pointer;"></span></td>
+						        </tr>						        
+						        <tr style="display:none;" id="view_data<?php echo e($user->id); ?>">
+						        	<td colspan="8">
+						        		<table class="table-responsive" cellspacing="0" width="100%">
+						        			<tr>
+						        				<td><strong><?php echo e(trans('admin.customer.id')); ?> :</strong> <?php echo e($user->id); ?></td>						        				
+						        				<td><strong><?php echo e(trans('admin.name')); ?> :</strong> <?php echo e(ucfirst($user->first_name).' '.ucfirst($user->last_name)); ?></td>
+						         			</tr>
+						         			<tr>	
+						         				<td><strong><?php echo e(trans('admin.contact')); ?> :</strong> <?php echo e($user->contact_number); ?></td>						        				
+						        				<td><strong><?php echo e(trans('admin.email')); ?> :</strong> <?php echo e($user->email); ?></td>						        			       			
+						        			</tr>
+						          			<tr>	
+						         				<td><strong><?php echo e(trans('admin.created')); ?> :</strong> <?php echo e($user->created_at); ?></td>						        				
+						        				<td><strong><?php echo e(trans('admin.status')); ?> :</strong>
+						        				<?php if($user->status == 1): ?>
+								            		<?php echo e(trans('admin.active')); ?>
+
+								            	<?php else: ?>
+								            		<?php echo e(trans('admin.inactive')); ?>
+
+								            	<?php endif; ?></td>						        			       			
+						        			</tr>
+						          			       			
+						        		</table>
+						        	</td>	
+						        </tr>
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="8" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+					        <tr>
+					        	<td colspan="8">
+					        		<?php echo $data['user_data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+					        	</td>
+					        </tr>
+					        
+					    </tbody>
+						</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,68 @@
+<?php $__env->startSection('title', ucfirst(\Request::segment(2)).' '.trans('admin.login')); ?>
+<?php $__env->startSection('content'); ?>
+<header>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-5">
+        <a href="<?php echo e(url('/')); ?>" title="" class="logo"><img src="<?php echo e(asset('images/admin-logo.png')); ?>" alt=""></a>
+      </div>
+      <div class="col-sm-7">
+          <div class="top-link text-right">
+    					<ul class="list-inline">
+    						<!-- <li>
+    							<div class="dropdown">
+    							  <a id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+    							  	<i class="flaticon-earth"></i>
+    							    <?php echo e(trans('admin.language')); ?>
+
+    							    <span class="flaticon-arrows"></span>
+    							  </a>
+                    
+    							  <ul class="dropdown-menu" aria-labelledby="dLabel">
+      							  	<?php foreach(Config::get('app.alt_langs') as $lang): ?>
+      							  		<li><a href="<?php echo e('/'.$lang.'/admin'); ?>" class="" title=""><?php echo e(Config::get('constants.language_map.'.$lang)); ?></a></li>
+      							  	<?php endforeach; ?>
+    							  </ul>
+                    
+    							</div>
+    						</li> -->
+    					</ul>
+				  </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+<div class="page-data-cont">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-default margin-top">
+          <div class="panel-heading"><?php echo e(trans('admin.login')); ?></div>
+          <div class="panel-body">
+            <?php echo Html::ul($errors->all(), array('class'=>'alert alert-danger errors')); ?>
+
+           <?php echo Form::open(array('role' => 'form','url' => \Request::segment(2))); ?>  
+            <div class="form-group">
+              <input type="text" name="email" value="" placeholder="Username" class="form-control" autofocus>
+            </div>
+            <div class="form-group">
+              <input type="password" name="password" value="" placeholder="Password" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="checkbox" name="remember_me" value="1" placeholder="" id="rem-pw">
+              <label for="rem-pw"><?php echo e(trans('admin.remember.passward')); ?></label>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-full"><?php echo e(trans('admin.login')); ?></button>
+            </div>
+          </div>
+          <?php echo Form::close(); ?>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.loginLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

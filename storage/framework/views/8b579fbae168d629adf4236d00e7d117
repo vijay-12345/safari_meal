@@ -1,0 +1,95 @@
+<?php $__env->startSection('title', trans('admin.reports.customer')); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<?php echo e(trans('admin.reports.customer')); ?>
+
+						</div>
+
+						<div class="panel-body">
+							<?php if(Session::has('success')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(session('success')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<form action="" method='get' id='filterForm'>
+							    <input type="hidden" name="page" value="1" id='page'>
+								<table class="table table-responsive filter-inner-form">
+									<tr>
+										<td>
+											<input type="text" name="name" id="name" value="<?php echo e(Request::get('name')); ?>" placeholder="Name">
+											<!-- <input type="email" name="email" id="email" value="<?php echo e(Request::get('email')); ?>" placeholder="Email"> -->
+											<input type="text" name="email" id="email" value="<?php echo e(Request::get('email')); ?>" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"  oninvalid="this.setCustomValidity('Please enter valid email')">
+											<input type="text" maxlength = "10" name="phone" id="phone" value="<?php echo e(Request::get('phone')); ?>" placeholder="Phone">
+
+											<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+											<button type="button" id="reset" class="btn btn-primary" value="<?php echo e(trans('admin.reset')); ?>"><?php echo e(trans('admin.reset')); ?></button>
+
+											<a href="<?php echo e(url('admin/reports/customer/export?name='.Request::get('name').'&email='.Request::get('email').'&phone='.Request::get('phone'))); ?>" class='btn btn-primary btn-md btn-default'>Export</a>
+										</td>
+									</tr>
+								</table>
+							</form>
+							<?php if($data != null && $data->total() ): ?>
+			                    <p><?php echo e('Showing '.$data->firstItem().'-'.$data->lastItem().' of '.$data->total()); ?></p>
+			                <?php endif; ?>
+
+
+			                <div class='table-responsive'>
+								<table class="table table-striped">
+									<thead>
+									    <tr>					           
+										    <th>Image</th>
+										    <th>Name</th>
+										    <th>Email</th>
+										    <th>Phone</th>
+										    <th>Orders</th>
+										    <th>Order Amount</th>
+									    </tr>
+									</thead>
+									<tbody>
+										<?php if($data == null || $data->isEmpty() ): ?>
+											<tr>
+												<td colspan="6">No records found.</td>
+											</tr>
+										<?php else: ?>
+											<?php foreach($data as $key => $val): ?>
+												<tr>
+													<td><img src="<?php echo e($val->profile_image ? $val->profile_image : url('images/cart-empty.png')); ?>" width='50' class='img-circle' height="50" alt="<?php echo e($val->first_name); ?>"></td>
+													<td><?php echo e(trim($val->first_name.' '.$val->last_name)); ?></td>
+													<td><a href="mailto:<?php echo e($val->email); ?>"><?php echo e($val->email); ?></a></td>
+													<td><?php echo e($val->contact_number); ?></td>
+													<td><?php echo e((int) $val->orders); ?></td>
+													<td><?php echo e((float) $val->amount); ?></td>
+												</tr>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</tbody>
+								</table>
+							</div>
+							<?php if($data != null): ?>
+							<?php echo $data->appends( Request::all() )->render(); ?>
+
+							<?php endif; ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

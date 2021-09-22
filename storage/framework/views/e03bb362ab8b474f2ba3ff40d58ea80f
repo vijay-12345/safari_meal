@@ -1,0 +1,120 @@
+<?php $__env->startSection('title', trans('admin.add.order')); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<?php $prefix = \Request::segment(2); ?>
+
+<link href="<?php echo e(asset('css/style.css')); ?>" rel="stylesheet">
+<link href="<?php echo e(asset('css/bootstrap-datetimepicker.css')); ?>" rel="stylesheet"  media="all">
+<script type="text/javascript" src="<?php echo e(asset('js/jquery.bxslider.min.js')); ?>"></script>
+<script type="text/javascript" src="<?php echo e(asset('js/jquery.flexslider-min.js')); ?>"></script>
+<script type="text/javascript" src="<?php echo e(asset('js/typeahead.js')); ?>"></script>
+<script type="text/javascript" src="<?php echo e(asset('js/moment-with-locales.js')); ?>"></script>
+<script type="text/javascript" src="<?php echo e(asset('js/bootstrap-datetimepicker.js')); ?>"></script>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+
+			<div class="col-md-9">
+
+				<?php echo Form::open(['class'=>'filter-form admin-order-add','url' => $prefix.'/order/add']); ?>
+
+				
+				<?php if(Session::has('flash_message')): ?>
+				    <div class="alert alert-success">
+				        <?php echo e(Session::pull('flash_message')); ?>	   
+				    </div>
+				<?php endif; ?>
+
+				<?php if($errors->any()): ?>
+				    <div class="alert alert-danger">
+				        <?php foreach($errors->all() as $error): ?>
+				            <p><?php echo e($error); ?></p>
+				        <?php endforeach; ?>
+				    </div>
+				<?php endif; ?>
+
+				<div class="page-data-right">
+					<div class="page-title">
+						<div class="row">
+							<div class="col-md-12">
+								<h3><?php echo e(trans('admin.add.order')); ?></h3>
+							</div>
+						</div>
+					</div>
+					 	
+					<div class="row">
+						<div class="col-md-9">
+							<div class="panel panel-default">
+							  <div class="panel-body">							  	
+							    <div class="table-responsive">
+										<table class="table table-bordered no-margin">
+											<tr>
+												<td><h5><?php echo e(trans('admin.select.restaurant')); ?>:</h5></td>
+												<td>
+													<?php if(Session::get('access.role') == 'admin'): ?>
+														<?php echo Form::select('restaurant_id',[''=>trans('admin.select.restaurant')]+$data['restaurant_data'], null, ['class' => 'form-control','id'=>'order_restaurant_search']); ?>
+
+													<?php elseif(count($data['restaurant_data'])): ?>
+														<?php echo Form::select('restaurant_id', $data['restaurant_data'], null, ['class' => 'form-control','id'=>'order_restaurant_search']); ?>
+
+													<?php else: ?>
+														<?php echo Form::select('restaurant_id', [''=>trans('admin.select.restaurant')], null, ['class' => 'form-control','id'=>'order_restaurant_search']); ?>
+
+													<?php endif; ?>
+												</td>
+											</tr>
+											<tr>
+												<td><h5><?php echo e(trans('admin.search.customer')); ?>:</h5></td>
+												<td>
+													<input type="text" name="search_customer" id="order_search_customer" value="" placeholder="<?php echo e(trans('admin.mobile.number')); ?>" class="form-control">
+												</td>
+												<td>
+													<input type='button' name="search_customer_button" id="order_search_customer_button" value="<?php echo e(trans('admin.search')); ?>" class="form-control btn btn-primary"/>
+												</td>
+											</tr>
+											<tr>
+												<td colspan="3">
+													<p class="" id="order_customer_search_result"><!-- ajax customer search data -->
+													</p>
+												</td>
+											</tr>
+										</table>
+									</div>
+							  </div>
+							</div>
+						</div>
+					</div>
+
+					
+					<div class="row" id="order_restaurant_search_result">
+						<!-- ajax restaurent search result -->
+					</div>
+					
+				</div>
+				<?php echo Form::close(); ?>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$( document ).on('click', 'input[name="order_type"]', function(){
+		if( $(this).val() == 'delivery') {
+			$('#delivery').show();
+			var total = parseFloat($('#total').data('total')) + parseFloat($('#deliveryCharge').data('total'));
+			$('#total').html( '$' + total );
+		} else {
+			$('#delivery').hide();
+			$('#total').html( '$' + $('#total').data('total') );
+		}
+	});	
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

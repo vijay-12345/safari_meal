@@ -1,0 +1,108 @@
+<?php  
+use App\City;
+use App\User;
+?>
+
+
+<?php $__env->startSection('title', 'Order History'); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<?php		
+$cities = City::get();	
+$country_code = DB::table('country_code')->select(DB::raw('DISTINCT(phonecode)'))->orderBy('phonecode', 'ASC')->where('phonecode','!=','241')->get();
+?>
+
+<div class="inner-page-header">
+	<div class="container">
+	<div class="row">
+	<div class="col-md-9">
+		<div class="breadcrumbs-cont">
+			<p><a href="<?php echo e(url('/')); ?>" title="">Home</a> / <a href="<?php echo e(url('/editprofile')); ?>" title="">My Profile</a> /  <a href="<?php echo e(url('/editprofile')); ?>" title="">Account Settings </a> </p>
+		</div>
+		</div>
+		<div class="col-md-3">
+
+		</div>
+		</div>
+	</div>
+</div>	
+	
+	
+<div class="inner-page-data">
+	<div class="container">
+		<div class="sidebar-data">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="sidebar-menu">
+						<ul>
+							<!-- <li><a href="javascript:void(0)" title=""><i class="flaticon-people"></i>Activity
+								<span class="flaticon-arrows-1"></span>
+							</a></li> -->
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="flaticon-shape"></i>My Account <span class="flaticon-arrows-1"></span></a>
+								<ul class="dropdown-menu">
+									<li class="active"><a href="<?php echo e(url('/editprofile')); ?>"><i class="flaticon-cogwheel"></i>Account Settings
+										<!-- <span class="flaticon-arrows-1"></span> -->
+									</a></li>
+									<li><a href="<?php echo e(url('/changepassword')); ?>"><i class="flaticon-lock"></i>Change Password
+										<!-- <span class="flaticon-arrows-1"></span> -->
+									</a></li>
+								</ul>
+							</li>
+							<li><a href="<?php echo e(url('/addressbook')); ?>" title=""><i class="flaticon-gps-1"></i>Address Book</a></li>
+							<li class='keep-open open'><a href="<?php echo e(url('order-history')); ?>" title=""><i class="flaticon-coins"></i>Order History</a></li>
+							<li><a href="<?php echo e(url('tablebook-history')); ?>" title=""><i class="flaticon-coins"></i>Table Booking History</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<div class="page-data-right">
+						<div class="page-data-header">
+							<i class="flaticon-cogwheel"></i>
+							Order History
+						</div>						
+						<div class="page-data-outer">
+							<div class="table-responsive">
+								<table class="table table-stripped">
+									<thead>
+										<tr>
+											<th>Order #</th>
+											<th>Restaurant</th>
+											<th>Order Time</th>
+											<th>Type</th>
+											<th>Total Amount</th>
+											<th>Status</th>
+										</tr>
+										<tbody>
+											<?php if($orders->isEmpty()): ?>
+												<tr><td colspan="6"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+											<?php else: ?>
+												<?php foreach($orders as $key => $val): ?>
+													<tr>
+														<td><?php echo e($val->order_number); ?></td>
+														<td><a href="<?php echo e(url('restaurentdetail/'.$val->restaurent_urlalias)); ?>" target="_blank"><?php echo e($val->restaurant_name); ?></a></td>
+														<td><?php echo e(date('M d, Y', strtotime($val->date)) .' at '.date('H:i a', strtotime($val->time))); ?></td>
+														<td><?php echo e(ucfirst($val->order_type)); ?></td>
+														<td><?php echo e(format($val->amount)); ?></td>
+														<td><?php echo e(config('constants.order_status_label.weborapp.'.$val->status)); ?></td>
+													</tr>
+												<?php endforeach; ?>
+											<?php endif; ?>
+										</tbody>
+									</thead>
+								</table>
+							</div>
+
+							<?php echo $orders->render(); ?>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('publicLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

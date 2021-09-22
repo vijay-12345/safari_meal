@@ -1,0 +1,152 @@
+<?php
+use App\Product;
+use App\State, App\City, App\Area;
+//use DB;
+
+?>
+
+
+
+<?php $__env->startSection('title', Lang::get('home.add_new_address')); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<?php  
+
+$formaction ='addnewaddressbook';
+$formclass ='addnewaddress';
+if(Request::input('addr')){
+
+}
+
+/*if(Request::input('addr')){
+	$addressid = Request::input('addr');
+	$userAddress = DB::table('user_address')->where('id',$addressid)->first();	
+	$formaction ='updateaddressbook';
+	$formclass ='updateaddress';
+}*/
+
+?>
+<div class="<?php echo e($formclass); ?>">	
+	 <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal">&times;</button>	    
+	    <?php if(Request::input('addr')): ?>
+			<h4 class="modal-title">Edit Address </h4>
+	    <?php else: ?> 
+			<h4 class="modal-title"><?php echo e(Lang::get('home.add_new_address')); ?></h4> 
+		<?php endif; ?>
+	</div> 	
+	<div class="modal-body">                                                       						                
+		<div class="content-block choices-toppings__container">                                                                   
+			<?php echo Form::open(array('url'=>$formaction,'class' =>$formaction)); ?> 			
+			<input type="hidden" value="<?php echo e(Auth::user()->id); ?>" name="user_id" class="form-control icon-field"> 
+			<?php if(Request::input('addr')): ?>								
+			<input type="hidden" value="<?php echo e($addressid); ?>" name="id" class="form-control icon-field"> 								
+			<?php endif; ?>			
+			<div class="form-group">
+<label for="first_address"><?php echo e(Lang::get('home.first_address')); ?> <span class="red">*</span></label>
+				<!--input type="text" name="first_address" value="<?php if(Request::input('addr')): ?><?php echo e($userAddress->first_address); ?><?php endif; ?>" placeholder="<?php echo e(Lang::get('home.first_address')); ?>" class="form-control icon-field" -->	
+				<input type="text" name="first_address" value="<?php if(Request::input('first_address')): ?><?php echo e(Request::input('first_address')); ?><?php endif; ?>" placeholder="<?php echo e(Lang::get('home.first_address')); ?>" class="form-control icon-field">	
+				<i class="flaticon-internet"></i>
+<p><?php echo e(Lang::get('home.first_address_hint')); ?></p>
+				<?php echo Form::errorMsg('first_address', $errors); ?>
+
+			</div>	
+			<div class="form-group">
+<label for="second_address"><?php echo e(Lang::get('home.second_address')); ?> <span>(Optional)</span></label>
+				<!--input type="text" name="second_address" value="<?php if(Request::input('addr')): ?><?php echo e($userAddress->second_address); ?><?php endif; ?>" placeholder="<?php echo e(Lang::get('home.second_address')); ?>" class="form-control icon-field"-->	
+				<input type="text" name="second_address" value="<?php if(Request::input('second_address')): ?><?php echo e(Request::input('second_address')); ?><?php endif; ?>" placeholder="<?php echo e(Lang::get('home.second_address')); ?>" class="form-control icon-field">
+				<i class="flaticon-internet"></i>
+<p><?php echo e(Lang::get('home.second_address_hint')); ?></p>
+			</div>			
+			<div class="form-group">
+<label for="country"><?php echo e(Lang::get('home.country')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker" name="country" id="country">
+					<option value="">---Select---</option>
+					<?php if(isset($countries)): ?>
+						<?php foreach($countries as $countrie): ?>
+							<option data-option="<?php echo e($countrie['country_id']); ?>" value="<?php echo e($countrie['country_code']); ?>" 
+								<?php if(null !== Request::input('country') && Request::input('country')): ?> ==$countrie['country_name'])
+								<?php echo e('selected'); ?>
+
+								<?php endif; ?>		
+							>
+							<?php echo e($countrie['country_name']); ?>
+
+							</option>
+						<?php endforeach; ?>
+					<?php endif; ?>					
+				</select>				
+				<i class="flaticon-earth"></i>
+				<?php echo Form::errorMsg('country', $errors); ?>
+
+			</div>
+			<div class="form-group">
+<label for="states"><?php echo e(Lang::get('home.state')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker selector" name="state" id="states">					
+					<?php if(count(Request::all())>0 && "" != Request::input('state')): ?>
+					<option data-option ="<?php echo e(Request::input('state')); ?>" value="<?php echo e(Request::input('state')); ?>"><?php echo e(State::getStateById(Request::input('state'))->state_name); ?></option>
+					<?php else: ?>
+					<option value="">---Select---</option>
+					<?php endif; ?>					
+				</select>
+				<input style="display:none" class="form-control icon-field selector" type="text" name="state"></input>								
+				<i class="flaticon-location"></i>
+				<?php echo Form::errorMsg('state', $errors); ?>
+
+			</div>
+			
+			<div class="form-group">
+<label for="cities"><?php echo e(Lang::get('home.city')); ?><span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker selector" name="city" id="cities">
+					<?php if(count(Request::all())>0 && "" != Request::input('city')): ?>
+					<option data-option ="<?php echo e(Request::input('city')); ?>" value="<?php echo e(Request::input('city')); ?>"><?php echo e(City::getCityById(Request::input('city'))->name); ?></option>
+					<?php else: ?>
+					<option value="">---Select---</option>
+					<?php endif; ?>					
+				</select>
+				<input style="display:none" class="form-control icon-field selector" type="text" name="city" value=""></input>
+				<i class="flaticon-gps-1"></i>
+				<?php echo Form::errorMsg('city', $errors); ?>
+
+			</div>	
+			<div class="form-group">
+<label for="areaa"><?php echo e(Lang::get('home.area')); ?> <span class="red">*</span></label>
+				<select class="form-control icon-field selectpicker selector" name="area" id="areaa">					
+					<?php if(count(Request::all())>0 && "" != Request::input('area')): ?>
+					<option value="<?php echo e(Request::input('area')); ?>"><?php echo e(Area::getAreaById(Request::input('area'))->name); ?></option>
+					<?php else: ?>
+					<option value="">---Select---</option>
+					<?php endif; ?>					
+				</select>				
+				<input style="display:none" class="form-control icon-field selector" type="text" name="area"></input>
+				<i class="flaticon-gps-2"></i>
+				<?php echo Form::errorMsg('area', $errors); ?>
+
+			</div>
+			<div class="form-group">
+<label for="landmark"><?php echo e(Lang::get('home.landmark')); ?> <span>(Optional)</span></label>
+				<input type="text" name="landmark" value="<?php if(Request::input('landmark')): ?><?php echo e(Request::input('landmark')); ?><?php endif; ?>" placeholder="<?php echo e(Lang::get('home.landmark')); ?>" class="form-control icon-field">					
+				<i class="flaticon-signpost"></i>
+				<?php echo Form::errorMsg('landmark', $errors); ?>
+
+			</div>
+			<div class="form-group">
+<label for="zip"><?php echo e(Lang::get('home.zip')); ?> <span>(Optional)</span></label>
+				<!--input type="text" name="zip" value="<?php if(Request::input('addr')): ?><?php echo e($userAddress->zip); ?><?php endif; ?>" placeholder="Zip" class="form-control icon-field"-->	
+				<input type="text" name="zip" value="<?php if(Request::input('zip')): ?><?php echo e(Request::input('zip')); ?><?php endif; ?>" placeholder="<?php echo e(Lang::get('home.zip')); ?>" class="form-control icon-field">					
+				<i class="flaticon-signpost"></i>
+				<?php echo Form::errorMsg('zip', $errors); ?>
+
+			</div>
+			<div class="choices-toppings__submit">
+				<button class="btn btn-primary btn-lg " id="product_skeleton_submit" type="submit">Submit</button>
+			</div>                                                            
+			<?php echo Form::close(); ?>
+
+		</div>                                                                                                                    
+	</div>							                
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('publicLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

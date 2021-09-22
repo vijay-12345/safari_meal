@@ -1,0 +1,159 @@
+@media (max-width:1150px){
+}
+@media only screen and (max-width:995px){
+.restro-list-home li{
+	margin-bottom: 30px;
+}
+.step-box{
+	margin-bottom: 30px;
+}
+}
+@media only screen and (max-width:767px){
+a.logo {
+    display: block;
+    width: 140px;
+    margin: 0 auto;
+}
+header{
+	padding-top: 30px;
+}
+.top-link.text-right {
+  text-align: center;
+  margin: 25px 0 0;
+}
+.banner-data h2{
+	font-size: 40px;
+}
+.banner-data h4 {
+  font-size: 18px;
+}
+.banner-data h2 {
+  font-size: 30px;
+  font-weight: 700;
+}
+.btn-srch{
+	position: relative;
+  width: 100%;
+}
+.mobile-app-img {
+  width: 300px;
+  margin: 0 auto;
+}
+.app-sec-data {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.footer-bottom p {
+  margin: 10px 0 0;
+  text-align: center !important;
+}
+.restro-list-data{
+  padding: 0px;
+}
+.restro-thumb{
+  position: relative;
+}
+.restro-menu-btn{
+  top: 20px;
+}
+.restro-list-bottom li {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+.restro-list{
+  margin: 30px 0 0;
+}
+.restro-list-bottom .rating-star-cont{
+  position: relative;
+  top: 0;
+  float: left;
+  margin: 8px 0 0;
+}
+.restro-list-bottom .rating-count{
+  position: relative;
+  right: 0;
+  bottom: 0;
+  float: left;
+  margin: 5px 0 0 15px;
+}
+.restro-list-bottom .rating-text{
+  position: relative;
+  float: left;
+  right: 0px;
+  bottom: 0px;
+  margin: 10px 0 0 10px;
+}
+}
+@media only screen and (max-width: 479px){
+.top-link li {
+  margin-left: 5px;
+}
+.food-order-cont {
+  margin: 30px 0 0;
+}
+.banner-data {
+  margin-top: 170px;
+}
+.banner-bottom{
+	font-size: 15px;
+}
+.list-outer li {
+  width: 50%;
+}
+.email-subscribe-cont {
+  height: auto;
+}
+.email-subscribe-cont .btn-es{
+  position: relative;
+  width: 100%;
+  border-radius: 5px;
+  margin: 10px 0 0;
+}
+.single-restro {
+  padding: 20px;
+}
+.restro-menu-btn {
+  position: absolute;
+  right: 0px;
+  top: 20px;
+  width: auto;
+  height: 35px;
+  line-height: 35px;
+  padding: 0 10px;
+  font-size: 16px;
+}
+}
+@media only screen and (max-width: 350px){
+.banner-data h2 {
+  font-size: 23px;
+}
+.top-link li a {
+  font-size: 15px;
+}
+.top-link li a i:before {
+  margin-right: 3px;
+  font-size: 13px;
+}
+.top-link li {
+  margin-left: 0px;
+}
+.top-link.text-right {
+  text-align: center;
+  margin: 25px -10px 0;
+}
+.banner-bottom{
+	height: auto;
+}
+.banner-bottom a {
+  color: #fff;
+  font-size: 16px;
+  background: #393737;
+  padding: 0px 10px;
+  margin-left: 10px;
+  display: block;
+}
+.mobile-app-img {
+  width: 100%;
+}
+}

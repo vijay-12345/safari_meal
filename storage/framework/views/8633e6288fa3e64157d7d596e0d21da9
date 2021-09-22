@@ -1,0 +1,388 @@
+<?php  
+use App\Product;
+//echo $order->amount.'<br>';
+//echo $order->id.'<br>';
+?>
+
+
+<?php $__env->startSection('title', 'Foo app application'); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<?php if(Session::has('Successmessage')): ?>
+	<div class="alert alert-success">
+	   <?php echo e(Session::pull('Successmessage')); ?>
+
+	</div>
+
+<?php else: ?>
+	<?php if(Session::has('Errormessage')): ?> 
+		<div class="alert alert-danger">
+		 <?php echo e(Session::pull('Errormessage')); ?>
+
+		</div>
+	<?php endif; ?>
+<?php endif; ?>
+
+<?php 
+	Session::pull('Successmessage');
+	Session::pull('Errormessage');
+?>
+
+<div class="inner-page-header">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-9">
+				<div class="breadcrumbs-cont">
+					<p><a href="<?php echo e(url('restaurentdetail/'.$restaurantdetails->restaurent_urlalias)); ?>" title=""><i class="fa fa-angle-left" aria-hidden="true"></i> &nbsp;Back to restaurants</a></p>
+				</div>
+			</div>
+			<div class="col-md-3">
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php $url='proceedtosecurecheckout/'.$ordernumber; ?>
+
+<?php echo Form::open(['class'=>'form-horizontal secure_form','url' => $url]); ?>	
+							
+	<div class="checkout-tab">
+		<div class="inner-page-data">
+
+			<div class="check-tab-header">
+				<div class="container">
+					<!-- Nav tabs -->
+				  	<ul class="nav nav-tabs" role="tablist">
+					    <li role="presentation" class="or-sm">
+					    	<a href="#OrderSumm" aria-controls="OrderSumm" role="tab" data-toggle="tab">
+						    	<i class="cart-summ-icon"></i>
+						    	<span class="heading">1. Your Order</span>
+						    	<span>Make sure everything is as your wish</span>
+					    	</a>
+						</li>
+					    <li role="presentation" class="chck-out active">
+					    	<a href="#Checkout" aria-controls="Checkout" role="tab" data-toggle="tab">
+						    	<i class="chckout-icon"></i>
+								<span class="heading">2. Secure Checkout</span>
+						    	<span>Select delivery address and payment type</span>
+					    	</a>
+						</li>
+				  	</ul>
+				</div>
+			</div>
+
+			<div class="check-tab-data-outer">
+				<div class="container">
+					<!-- Tab panes -->			  
+				    <div role="tabpanel" class="tab-pane" id="Checkout">
+						<div class="sidebar-data">
+							<div class="row">
+								<div class="col-md-8">
+									<div class="cart-summry-data">
+										<div class="page-data-header">
+											<i class="flaticon-round-1"></i>
+											My Contact Details
+										</div>
+
+										<div class="border-data user-detail">
+											<div class="form-group">
+												<div class="row" >
+													<div class="col-md-5">
+														<i>Address Book</i>
+													</div>
+													<div class="col-md-5" >
+													</div>
+													<div class="col-md-2" style="padding:15px;" >
+														<a data-toggle="modal" data-target="#addnewaddress" href="<?php echo e(asset('/')); ?><?php echo e(Config::get('app.locale_prefix')); ?>/loadnewaddressbook">
+															<button class="btn btn-primary">Add new address</button>
+														</a>
+													</div>
+												</div>
+
+												<?php if($addressflag): ?>
+													<div class="row">
+														<div class="col-md-12">
+															<select id="OptDelivAddr" name="area" class="form-control icon-field selectpicker" >
+															<?php foreach($useraddresses as $useraddress): ?>
+																<?php
+																// $guestAddress = isset($useraddress->first_address) && ($useraddress->first_address) ? ucfirst($useraddress->first_address).', ' : '';
+																// $guestAddress .= isset($useraddress->second_address) && ($useraddress->second_address) ? ucfirst($useraddress->second_address).', ' : '';
+																// $guestAddress .= isset($useraddress->name) && ($useraddress->name) ? ucfirst($useraddress->name).', ' : '';
+																// $guestAddress .= isset($useraddress->state_name) && ($useraddress->state_name) ? ucfirst($useraddress->state_name).', ' : '';
+																// $guestAddress .= isset($useraddress->country_name) && ($useraddress->country_name) ? ucfirst($useraddress->country_name).', ' : '';
+																// $guestAddress .= isset($useraddress->zip) && $useraddress->zip ? $useraddress->zip : '';
+																?>
+																<option rel="<?php echo e($useraddress->user_id); ?>" value="<?php echo e($useraddress->user_addressid); ?>">
+																	<?php if(isset($useraddress->first_address)): ?>
+																		<?php echo e(ucfirst($useraddress->first_address)); ?>
+
+																	<?php endif; ?>
+																	<?php if(isset($useraddress->second_address)): ?>
+																		<?php echo e(', '.ucfirst($useraddress->second_address)); ?>
+
+																	<?php endif; ?>
+																	<?php if(isset($useraddress->name)): ?>
+																		<?php echo e(', '.ucfirst($useraddress->name).',  '); ?>
+
+																	<?php endif; ?>
+																	<?php if(isset($useraddress->state_name)): ?>
+																		<?php echo e(ucfirst($useraddress->state_name)); ?>
+
+																	<?php endif; ?>
+																	<?php if(isset($useraddress->country_name)): ?>
+																		<?php echo e(',  '.ucfirst($useraddress->country_name).'  '); ?>
+
+																	<?php endif; ?>
+																	<?php if(isset($useraddress->zip)): ?>
+																		<?php echo e($useraddress->zip); ?>
+
+																	<?php endif; ?>
+																</option>
+															<?php endforeach; ?>
+															</select>
+														</div>
+													</div>
+												<?php endif; ?>
+											</div>
+
+											<table class="table">												
+											</table>
+										</div>
+
+										<div class="icon-heading-data">
+											<i class="flaticon-coins-1"></i>
+											Choose How To Pay
+										</div>
+
+										<div class="payment-box">
+											<div class="payment-tab">
+												<div class="row">
+
+													<div class="col-md-12 customPayment">
+														<!-- Nav tabs -->
+													  	<ul class="nav nav-tabs" role="tablist">
+														    <li role="presentation" class="active">
+														    	<a href="#cod" aria-controls="cod" role="tab" data-toggle="tab" class="paymentType">
+														    	<i class="flaticon-icon-1203"></i><?php echo e(Lang::get('proceedtocheckout.cod')); ?> 
+														    	<!-- <span class="flaticon-arrows-1"></span> -->
+														    	</a>
+															</li>
+														    <li role="presentation">
+														    	<a href="#cod" aria-controls="evc" role="tab" data-toggle="tab" class="paymentType"><i class="flaticon-icon-1203"></i><?php echo e(Lang::get('proceedtocheckout.evc')); ?> 
+														    	</a>
+														    </li>
+													  	</ul>
+													</div>
+
+													<!-- <div class="col-md-7"> -->
+													  	<!-- <div class="tab-content"> -->
+														    <!-- <div role="tabpanel" class="tab-pane active" id="cod"> -->
+																<?php 
+																 	// $imageurl = captcha_src();
+																 	// foreach(Config::get('app.alt_langs') as $key=>$v){
+																	 	// $imageurl= str_replace("/".$v,"",$imageurl);
+																	// }
+																?>
+																<!-- <?php /* <img src='<?php echo e($imageurl); ?>'></img> */ ?> -->
+																<!-- <div class="form-group captcha-field">
+																	<input type="hidden" name="ordernum" value="<?=$ordernumber?>" class="form-control">
+																	<input type="text" name="captcha" value="" class="form-control" placeholder="Enter Captcha">
+																	<input type="hidden" name="paymentmethod" value="COD" class="form-control" >
+																	<button type="submit" class="btn btn-primary btn-lg sbmt-btn-abs">Confirm Order</button>
+																	<div class="min-order error"></div>
+																</div> -->
+														    <!-- </div> -->
+													  	<!-- </div> -->
+													<!-- </div> -->
+
+												</div>
+											</div>
+										</div>
+
+									</div>
+
+								</div>
+
+								<div class="col-md-4">
+									<div class="sidebar-cart">
+										<div class="side-widget">
+											<div class="order-review">
+												<div class="side-widget-data or-header-outer">
+													<div class="or-header">
+														<?php
+															$image = isset($restaurantdetails->image->logo_location) ? $restaurantdetails->image->logo_location : 'images/default-restaurantlog.png';
+														?>
+														<span class="restro-logo" style="background: url('<?php echo e(url($image)); ?>')">
+															
+														</span>
+														Your Order
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<?php
+											$subtotal = $cart->getSubtotal(); 
+											$order_type = $cart->getOrderType();
+											$total = $cart->getTotal( $order_type );
+										?>
+
+										<div class="or-products">
+											<?php if(count($cart->getData())): ?>
+												<?php foreach($cart->getData() as $key => $data): ?>
+													<?php if(in_array($key, array('other'))): ?>
+														<?php $otherdetails= $data ?>
+													<?php else: ?>
+														<div class="row"> 
+															<div class="col-xs-9">
+																<div class="single"><span><?php echo e($data['quantity']); ?>x</span><?php echo e($data['name']); ?></div>
+															</div>
+															<div class="col-xs-3">
+																<div class="price text-right"><?php echo e(format($data['totalCost'])); ?></div>
+															</div>
+														</div>
+													<?php endif; ?>
+												<?php endforeach; ?>
+											<?php endif; ?>
+										</div>
+
+										<div class="sub-total">
+											Subtotal: <span><?php echo e(format( $subtotal )); ?></span>
+										</div>
+
+										<!-- start commented in old code -->
+										<div class="sub-total">
+											CGST <?php echo e($cart->getCGST()); ?> %: <span><?php echo e(format($cart->getCGST()/100 * $subtotal)); ?></span>
+										</div>
+
+										<div class="sub-total">
+											SGST <?php echo e($cart->getSGST()); ?> %: <span><?php echo e(format($cart->getSGST()/100 * $subtotal)); ?></span>
+										</div>
+
+										<div class="sub-total">
+											Packaging Fees: <span><?php echo e(format($cart->getPackagingFees())); ?></span>
+										</div>
+										<!-- end commented in old code -->
+
+										<?php if($order_type == 'delivery'): ?>
+											<div class="sub-total">
+												Delivery Charges: <span><?php echo e(format($cart->deliveryCharges())); ?></span>
+											</div>
+										<?php endif; ?>
+										
+										<?php if(!empty($cart->getcoupandiscountvalue())): ?>
+											<div class="sub-total" style="color:green">
+												Coupan Discount: <span><?php echo e(format($cart->getcoupandiscountvalue())); ?></span>
+											</div>
+										<?php endif; ?>
+										
+										<div id="confim_total" class="total" data-total="<?php echo e($total); ?>" data-min_order="<?php echo e($restaurantdetails->min_order); ?>" data-delivery_type="<?php echo e($order_type); ?>">
+											Total:  <?php echo e(format($total)); ?>
+
+										</div>
+
+										<div class="confirmOrderButton">
+											<div class="form-group">
+												<input type="hidden" name="ordernum" value="<?=$ordernumber?>" class="form-control">
+												<input type="hidden" name="paymentmethod" value="COD" class="form-control" >
+										       <button type="submit" class="btn btn-primary btn-lg sbmt-btn-abs">Confirm Order</button>
+									        </div>
+										</div>
+											
+									</div>
+								</div>
+
+							</div>
+						</div>
+						
+				    </div>
+			  	</div>
+			</div>
+
+		</div>
+	</div>
+
+<?php echo Form::close(); ?>
+
+
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		$('.paymentType').click(function() {
+			$('input[name="paymentmethod"]').val($(this).attr('aria-controls'));
+			$(this).parent().addClass('active');
+			$(this).parent().siblings().removeClass('active');
+			return false;
+		});
+	});
+</script>
+
+<script type="text/javascript">
+   	(function (global) { 
+
+     	if(typeof (global) === "undefined") {
+         	throw new Error("window is undefined");
+ 		}
+
+     	var _hash = "!";
+     	var noBackPlease = function () {
+            console.log('no back please');
+         	global.location.href += "#";
+         	global.setTimeout(function () {
+             	global.location.href += "!";
+         	}, 50);
+     	};
+
+     	global.onhashchange = function () {
+         	if (global.location.hash !== _hash) {
+             	global.location.hash = _hash;
+         	}
+ 		};
+
+     	global.onload = function () {            
+	        noBackPlease();
+	        document.body.onkeydown = function (e) {
+	            var elm = e.target.nodeName.toLowerCase();
+	            if (e.which === 8 && (elm !== 'input' && elm  !== 'textarea')) {
+	                e.preventDefault();
+	            }
+	            e.stopPropagation();
+	        };          
+	    }
+
+	})(window);
+	window.history.forward(1);
+	function preventBack() { 
+	  window.history.forward(1); 
+	}
+	preventBack();
+
+	
+$(document).ready(function () {
+	var addressId = $('select#OptDelivAddr').val();	
+	var userId = $('select#OptDelivAddr').find("option:selected").attr("rel");	
+	if(addressId){
+		$.ajax({			
+			'url' : '<?php echo e(url("ajax/optdeliveryaddress")); ?>',			
+			'data' : { 'addressId' : addressId,'userId' : userId},
+			'type' : 'post',
+			'success' : function(response){				
+				/*if(response=='noaddress'){
+					$(".user-detail .form-group select").replaceWith(response);											
+				}else{
+					$('.user-detail table').replaceWith(response);						
+				}*/				
+				$('.user-detail table').replaceWith(response);						
+			}			
+		});
+	}
+})
+
+
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('publicLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,42 @@
+<?php $__env->startSection('title', 'Contact::Food Fox'); ?>
+<?php $__env->startSection('content'); ?>
+<tr>
+  <td class='movableContentContainer' valign='top' style="padding-top: 20px;">
+    <div class='movableContent'>
+      <table width="520" border="0" cellspacing="0" cellpadding="0" align="center">
+        <tr>
+          <td align='left'>
+            <div class="contentEditableContainer contentTextEditable">
+              <div class="contentEditable">
+                <h2>Contacted Person Detail</h2>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr align="left">
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;">First Name:</td>
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;"><?php echo e($data['fname']); ?></td>
+        </tr>
+        <tr align="left">
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;">Last Name:</td>
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;"><?php echo e($data['lname']); ?></td>
+        </tr>
+        <tr align="left">
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;">Email:</td>
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;"><?php echo e($data['email']); ?></td>
+        </tr> 
+         <tr align="left">
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;">Phone:</td>
+          <td style="padding:15px 0;border-bottom:1px solid #e3e3e3;"><?php echo e($data['phone']); ?></td>
+        </tr> 
+        <tr align="left">
+          <td style="padding:15px 0;">Message:</td>
+          <td style="padding:15px 0;"><?php echo e($data['message']); ?></td>
+        </tr>
+        <tr><td height='15'> </td></tr>                       
+      </table>
+    </div>
+  </td>
+</tr>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('emails.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

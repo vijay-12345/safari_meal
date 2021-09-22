@@ -1,0 +1,94 @@
+<?php $__env->startSection('title', trans('admin.addon.option')); ?>
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e($group->name); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<table class="table table-responsive" cellspacing="0" width="100%">
+								<tr>
+									<td class="text-left"><a href="<?php echo e(url('admin/addon_group')); ?>" class="btn btn-primary btn-md"><?php echo e(trans('admin.back')); ?></a></td>							
+									<td class="text-right"><a href="<?php echo e(url('admin/addon_option/add').'/'.$group->id); ?>" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add.new')); ?></a></td>
+								</tr>
+							</table>
+
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>
+					            <th><?php echo e(trans('admin.group.name')); ?></th>
+					            <th><?php echo e(trans('admin.name')); ?></th>
+					            <th><?php echo e(trans('admin.created')); ?></th>
+					            <th><?php echo e(trans('admin.status')); ?></th>
+					            <th><?php echo e(trans('admin.action')); ?></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+
+					    	<?php if(count($data['data']) > 0): ?>
+					    		
+						    	<?php foreach($data['data'] as $v): ?>
+						    		
+						        <tr>					        	
+						          
+						            
+						            <td>
+						            	<?php if(isset($v->group) || !is_null($v->group)): ?>
+						            		<?php echo e($v->group->name); ?>
+
+						            	<?php else: ?>
+						            		N/A
+						            	<?php endif; ?>
+						            	
+						            </td>
+						            <td><?php echo e(ucfirst($v->item_name)); ?></td>
+						            <td><?php echo e($v->created_at); ?></td>
+				            		<td><?php if($v->status == 1): ?>
+						            		<?php echo e(trans('admin.active')); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e(trans('admin.inactive')); ?>
+
+						            	<?php endif; ?></td>			            
+			   					      		
+						             <td><a href="<?php echo e(url('admin/addon_option').'/edit/'.$v->id); ?>" class="glyphicon glyphicon-pencil"></a>&nbsp;&nbsp;<a href="<?php echo e(url('admin/addon_option').'/delete/'.$v->id); ?>"  onclick="return confirm(<?php echo e(trans('are.you.sure.to.delete.this')); ?>);" class="glyphicon glyphicon-remove"></a></td>
+						        </tr>						        
+						     
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="10" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+
+							<!-- <table class="table table-responsive" cellspacing="0" width="100%">
+								<tr>
+									<td class="text-left"><a href="<?php echo e(url('admin/addon_group')); ?>" class="btn btn-primary btn-md"><?php echo e(trans('admin.back')); ?></a></td>							
+									<td class="text-right"><a href="<?php echo e(url('admin/addon_option/add').'/'.$group->id); ?>" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add.new')); ?></a></td>
+								</tr>
+							</table> -->
+					        
+					    </tbody>
+						</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

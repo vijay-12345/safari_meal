@@ -1,0 +1,563 @@
+<?php $__env->startSection('title', 'Checkout'); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<?php if(Session::has('Successmessage')): ?>
+	<div class="alert alert-success">
+	   <?php echo e(Session::pull('Successmessage')); ?>
+
+	</div>
+<?php endif; ?>
+
+<?php if(Session::has('Errormessage')): ?> 
+	<div class="alert alert-danger">
+	 <?php echo e(Session::pull('Errormessage')); ?>
+
+	</div>
+<?php endif; ?>
+
+<?php
+	Session::pull('Successmessage');
+	Session::pull('Errormessage');
+?>
+
+<div class="inner-page-header">
+	<div class="container">
+	<div class="row">
+		<div class="col-md-9">
+			<div class="breadcrumbs-cont">
+				<p><a href="<?php echo e(url('/restaurentdetail/'.$restaurantUrl)); ?>" title=""><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Back to restaurants</a></p>
+			</div>
+		</div>
+		<div class="col-md-3">
+
+		</div>
+	</div>
+	</div>
+</div>
+
+<div class="checkout-tab">
+	<div class="inner-page-data">
+		<div class="check-tab-header">
+			<div class="container">
+				<!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" class="or-sm active"><a href="#OrderSumm" aria-controls="OrderSumm" role="tab" data-toggle="tab">
+			    	<i class="cart-summ-icon"></i>
+			    	<span class="heading">1. Your Order</span>
+			    	<span>Make sure everything is as your wish</span>
+			    </a></li>
+			    <li role="presentation" class="chck-out"><a href="#Checkout" aria-controls="Checkout" role="tab" data-toggle="tab">
+			    	<i class="chckout-icon"></i>
+						<span class="heading">2. Secure Checkout</span>
+			    	<span>Select delivery address and payment type</span>
+			    </a></li>
+			  </ul>
+
+			</div>
+		</div>		
+		<div class="check-tab-data-outer">
+			<div class="container">
+				<!-- Tab panes -->
+			  <div class="tab-content">
+			    <div role="tabpanel" class="tab-pane active" id="OrderSumm">
+												
+						<div class="menu-restro">
+            <div class="restro-list-data">
+				<?php 
+				$image= !is_null($restaurantdetails->image) ? $restaurantdetails->image->logo_location : 'no-image.png'; ?>
+				
+                <div class="restro-thumb" style="background: #fff url('<?php echo e(url($image)); ?>')"></div>
+                <div class="title">
+                <!--    <a href="#" title="<?php echo e($restaurantdetails->company); ?>"><?php echo e($restaurantdetails->company); ?></a> -->
+                </div>                                                          
+                <p><?php echo e($restaurantdetails->name); ?> </p>              
+                <div class="restro-list-bottom">
+                    <ul class="list-inline">
+                        <?php                                                 
+                        $timingstatus = "";
+                         $flag_close = false;
+                        $currenttime = strtotime(date('H:m:s'));
+                        $opentime = strtotime($restaurantdetails->open);                       
+                        $closetime = strtotime($restaurantdetails->closing);                                              
+                        if($currenttime < $opentime) {                                       
+                            $timediff = ($opentime - $currenttime);                         
+                            $fsd = explode(":",date("H:i", $timediff));
+                            $timingstatus .=Lang::get('home.Opens.in');
+                            if($fsd[0]!=0){
+                                $timingstatus .=' '.$fsd[0].'h';
+                            }
+                            if($fsd[1]!=0){
+                                $timingstatus .=' '.$fsd[1].'min';
+                            } 
+                             $flag_close = true;                      
+                        }else if($restaurantdetails->open==0){
+                            $timingstatus =  Lang::get('home.Today').' '.Lang::get('home.Closed').'.';
+                             $flag_close = true;    
+                        }else if($currenttime>$opentime && $currenttime < $closetime){
+                            $timingstatus =  Lang::get('home.Already.Open.');
+                        }else{
+                            $timingstatus =  Lang::get('home.Closed').'.';
+                             $flag_close = true;    
+                        }                        
+                        ?>
+                        <li><div class="restro-time"><i class="flaticon-time"></i><?php /* */ echo $timingstatus ;/* */ ?></div></li>
+                        <li class="clearfix">
+                            <div class="rating-star-cont">
+                                <span class="rating-static rating-<?php echo e($restaurantdetails->rating*10); ?>"></span>
+                            </div>
+                            <span class="rating-count"><?php echo e($restaurantdetails->rating); ?></span>
+                            <span class="rating-text"><?php echo e(Lang::get('home.Rating')); ?></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div><!--/single restro-->
+						<div class="sidebar-data">
+							<div class="row">
+								<div class="col-md-8">
+									<div class="cart-summry-data">	
+										<?php if(count($cart->getData())): ?>									
+										<?php foreach($cart->getData() as $key => $product): ?>
+											<?php if(in_array($key, array('other'))): ?>
+												<?php 	$otherdetails= $product?>
+											<?php else: ?>
+												<?php /* */ $productitemscount = App\Product::productOptions($product['prodid']);  /* */ ?>
+												<div class="summry-prod-single menu-item-data">
+													<!--div class="p-title">
+														<a href="#" title=""><?php echo e($product['name']); ?></a>
+													</div-->
+													<input name="checkoutproductid" type="hidden" value="<?php echo e($product['prodid']); ?>" class="checkoutproductid">
+													<div class="row">										
+														<div class="col-md-7">
+														<div class="p-title">
+															<a href="#" title=""><?php echo e($product['name']); ?></a>
+														</div>												
+														</div>
+														<div class="col-md-5">
+															<div class="row">
+																<div class="col-sm-6">
+																	  <span rel="checkout" field="<?php echo e(str_replace(' ', '', $product['name'])); ?>Qty-<?php echo e($product['prodid']); ?>" class="<?php if($productitemscount>0): ?><?php echo e('hasaddons'); ?><?php else: ?><?php echo e('noaddons'); ?><?php endif; ?> qtyminus qty-sub" <?php if($productitemscount>0): ?> data-toggle="modal" data-target="#ProdAddon<?php echo e($product['prodid']); ?>" <?php endif; ?> ><i class="fa fa-minus-circle"></i></span>
+																	  <span class="qty-input"><input name="<?php echo e(str_replace(' ', '', $product['name'])); ?>Qty-<?php echo e($product['prodid']); ?>" type="text" value="<?php echo e($product['quantity']); ?>"></span>
+																	  <span rel="checkout" field="<?php echo e(str_replace(' ', '', $product['name'])); ?>Qty-<?php echo e($product['prodid']); ?>" class="qtyplus qty-add <?php if($productitemscount>0): ?><?php echo e('hasaddons'); ?><?php else: ?><?php echo e('noaddons'); ?><?php endif; ?>" <?php if($productitemscount>0): ?> data-toggle="modal" data-target="#ProdAddon<?php echo e($product['prodid']); ?>" <?php endif; ?> ><i class="fa fa-plus-circle"></i></span>
+																	   <!-- Bhuvnesh ProductAddons popup start-->                                                                                 
+																	   <div class="modal fade" id="ProdAddon<?php echo e($product['prodid']); ?>" role="dialog">
+																				<div class="modal-dialog">    
+																					<!-- Modal content-->
+																					<div class="modal-content">
+																						<div class="modal-header">
+																							<button type="button" class="close" data-dismiss="modal">&times;</button>
+																							<h4 class="modal-title"> <?php echo e($product['name']); ?> </h4>
+																						</div>
+																						<div class="modal-body">                                                       
+																						<?php /* */ 
+																						$productaddons = App\Product::productAddons($product['prodid']);                                                          
+																						/* */ ?>
+																						<div class="content-block choices-toppings__container">
+																								<?php echo Form::open(array('class' =>'orderitemaddons')); ?> 
+																								<input type="hidden" name="productid[]" value="<?php echo e($product['prodid']); ?>">          
+																								<input type="hidden" name="itemname" value="<?php echo e($product['name']); ?>">        
+																								<input type="hidden" name="itemprice" value="<?php echo e($product['cost']); ?>">
+																								<div class="choices-toppings__elements__wrapper choices-toppings__product__information toggle-elements-container choices-toppings__product__information--no-image">
+																									<table class="table table-cart">
+																										<table class="table-cart">
+																										   <tbody>
+																											  <tr>
+																												 <td class="choices-toppings__product__information__text">
+																													<label for="cart_product_skeleton_quantity" class="control-label required">
+																													Quantity</label>
+																												 </td>
+																												 <td class="choices-toppings__product__information__quantity">                               
+																													<div class="choices-toppings__product__information__text__description">
+																													</div>
+																													<input type="number" min="0" value="<?=isset($cart->getData()[$product['prodid']]['quantity'])?$cart->getData()[$product['prodid']]['quantity']:1 ?>"  class="form-control number" name="cart_product_quantity" >
+																												 </td>
+																											  </tr>
+																										   </tbody>
+																									</table>
+																								</div> 
+																								<?php foreach($productaddons as $key => $productaddon): ?>                                                                                       
+																								<div class="choices-toppings__wrapper toggle-elements-container">    
+																									<div class="choices-toppings__elements__wrapper choices-toppings-checkbox-wrapper">
+																									  <div class="choices-toppings__title__container">
+																										 <h4 class="choices-toppings__title">
+																											<?php echo ($productaddon[0]['required']=="Y")?$key."*":$key;
+																											$key = preg_replace('/\s+/', '', $key);?>
+																											<span hidden=true id="<?php echo e($key); ?><?php echo e($productaddon[0]['required']); ?>" style='color:red;font-size: 14px;'>
+																												<?php echo e(Lang::get('validation.option_selection_reqired')); ?>
+
+																											 </span>
+																										 </h4> 
+																									  </div>
+																									<div class="row">     
+																									  <?php foreach($productaddon as $itemdetail): ?>  
+																										  <div class="col-sm-6">   
+																											<div class="<?php echo e($itemdetail['type']); ?>">
+																												<label>
+																												   <input 
+																												   <?php 
+																													 if($itemdetail['type']=='checkbox'){ echo "name=itemaddond[]";}else{ echo "name='itemaddond[]".$key."'";} 
+																												   if(isset($cart->getData()[$product['prodid']]['itemaddond']) && in_array($itemdetail['option_item_id'],$cart->getData()[$product['prodid']]['itemaddond']))
+																													  echo ' checked=true';
+																												   ?>
+																												   type="<?php echo e($itemdetail['type']); ?>" value="<?php echo e($itemdetail['option_item_id']); ?>"
+																												   class="<?php echo e($productaddon[0]['required']); ?> <?php echo e($key); ?><?php echo e($productaddon[0]['required']); ?>" rel="<?php echo e($key); ?>"
+																												   >
+																												   <?php echo e($itemdetail['item_name']); ?> (<?php echo e(format($itemdetail['price'])); ?>)
+																												</label>
+																											</div>          
+																										 </div>
+																									  <?php endforeach; ?>                                                 
+																									</div>                
+																									</div>
+																								</div> 
+																								<?php endforeach; ?>                       
+																								<div class="choices-toppings__submit">
+																									<button rel="checkout" class="btn btn-primary btn-lg choices-toppings__button--submit" name="cart_product_skeleton[submit]" id="cart_product_skeleton_submit" type="button">Submit</button>
+																								</div>                                                            
+																							<?php echo Form::close(); ?>
+
+																						</div>                                                    
+																																			
+																						</div>                                                       
+																					</div>      
+																				</div>
+																			</div>
+																	   <!-- Bhuvnesh ProductAddons popup end -->	
+																</div>
+																<div class="col-sm-6">
+																	<h5 class="p-price"><?php echo e(format($product['totalCost'])); ?></h5>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<?php endif; ?>
+										<?php endforeach; ?>																		
+										<?php endif; ?>
+
+										<?php $subtotal = $cart->getSubtotal(); $total = $cart->getTotal(); ?>
+										<div class="cart-total-summry">
+											<div class="row">
+												<div class="col-md-5 col-md-offset-7">
+													<div class="row">
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right">Subtotal:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center"><?php echo e(format($subtotal)); ?></div>
+														</div>
+													</div>
+													<?php /*
+													<div class="row">
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right">CGST <?php echo e($cart->getCGST()); ?> %:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center"><?php echo e(format($cart->getCGST()/100 * $subtotal)); ?></div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right">SGST <?php echo e($cart->getSGST()); ?> %:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center"><?php echo e(format($cart->getSGST()/100 * $subtotal)); ?></div>
+														</div>
+													</div>
+													
+													<div class="row">
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right">Packaging Fees:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center"><?php echo e(format($cart->getPackagingFees())); ?></div>
+														</div>
+													</div>
+													*/ ?>
+													<div class="row" id='delivery' style='display: none;'>
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right"><?php echo e(Lang::get('proceedtocheckout.Delivery.Charges')); ?>:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center"><?php echo e(format($cart->deliveryCharges())); ?></div>
+														</div>
+													</div>
+													<?php if(!empty($cart->getOtherData()['coupan'])): ?>
+													<div class="row green-color">
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right">Coupan Discount:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center"><?php echo e(format($cart->getcoupandiscountvalue())); ?></div>
+														</div>
+													</div>
+													<?php endif; ?>
+													<div class="row">
+														<div class="col-sm-9">
+															<div class="cart-total-title text-right">Total:</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="cart-total-title text-center" id='total' data-total="<?php echo e($total); ?>"><?php echo e(format( $total )); ?></div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="redeem-coupan">
+												<div class="row">
+													<?php if(empty($cart->getOtherData()['coupan'])): ?>
+														<?php echo Form::open(array('url' => 'checkcoupanvalid')); ?>
+
+														<div class="col-md-10">
+															<h5><?php echo e(Lang::get('proceedtocheckout.Enter.voucher.code.here')); ?></h5>
+															<div class="form-group">
+															<input type="text" name="coupancode" value="" placeholder="<?php echo e(Lang::get('proceedtocheckout.Enter.voucher.code')); ?>" class="form-control icon-field">
+														
+														<i class="flaticon-interface-3" id='coupanmessage'></i>
+														<button type="submit" class="btn btn-primary btn-lg sbmt-btn-abs">Submit</button>
+													<?php echo Form::close(); ?>
+
+													<?php else: ?>
+														<div class="col-md-10">
+															<h5>Enter voucher code here</h5>
+															<div class="form-group">
+															<input type="text" readonly name="coupancode" value="" placeholder="Enter voucher code" class="form-control icon-field">
+														<i class="flaticon-interface-3" id='coupanmessage'></i>
+														<button type="submit" class="btn btn-primary btn-lg sbmt-btn-abs"><?php echo e(Lang::get('proceedtocheckout.Submit')); ?></button>
+													<?php endif; ?>
+														
+												</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="g-total">
+											<div class="row">
+												<div class="col-md-5 col-md-offset-7">
+													<h4><?php echo e(Lang::get('proceedtocheckout.Total')); ?>:  
+													<span id='net'>
+														<?php echo format( $total ); ?>
+													</span>
+													</h4>
+												</div>
+											</div>
+										</div>
+
+									</div>
+
+								</div>
+								<div class="col-md-4">
+									<div class="sidebar-cart">
+									<div class="cart-heading"><i class="flaticon-shapes red-color"></i> <?php echo e(Lang::get('proceedtocheckout.Order.Information')); ?></div>
+										<?php echo Form::open(array('url' => 'createorder', 'id' => 'checkoutForm')); ?>
+
+										<input type="hidden" value="<?php echo e($cart->getcoupanid()); ?>" name="coupon_id" id="coupon_id" />
+										<div class="side-widget">
+											<div class="side-widget-data">
+												<div class="radio-cont">
+													<input type="hidden" value="<?php echo e($restaurantdetails->restaurant_id); ?>" name="restaurant_id">
+													<input type="radio" value="delivery" name="order_type" id="radio1" class="css-checkbox"/>
+													<label for="radio1" class="css-label radGroup1"><?php echo e(Lang::get('proceedtocheckout.Delivery')); ?></label>
+												</div>
+												<div class="radio-cont">
+													<input type="radio" value="pickup" name="order_type" id="radio2" class="css-checkbox"/>
+													<label for="radio2" class="css-label radGroup1"><?php echo e(Lang::get('proceedtocheckout.Pickup')); ?></label>
+													<span class="help-text"><?php echo e(Lang::get('proceedtocheckout.you.will.pick.up.the.order.yourself.at.restaurant')); ?></span>
+												</div>
+											</div>
+										</div>
+
+										<div class="side-widget">
+											<div class="side-widget-data">
+												<div class="radio-cont">
+													<input type="radio" value="soon" name="asap" id="radio3" class="css-checkbox" checked="checked"/>
+													<label for="radio3" class="css-label radGroup1"><?php echo e(Lang::get('proceedtocheckout.as.soon.as.possible')); ?></label>
+												</div>
+												<div class="radio-cont">
+													<input type="radio" value="later" name="asap" id="radio4" class="css-checkbox later"/>
+													<label for="radio4" class="css-label radGroup1"><?php echo e(Lang::get('proceedtocheckout.Later')); ?></label>
+												</div>
+												<div class="form-group later">
+													<input name="date"  type='text' class="form-control icon-field datepicker" placeholder="Select Date" />
+							        		<i class="flaticon-technology-2"></i>
+							        	</div>
+							        	<div class="form-group later">
+													<input name="time" type='text' class="form-control icon-field timepicker" placeholder="Select Time" />
+							        		<i class="flaticon-clock-1"></i>
+							        	</div>
+											</div>
+										</div>
+
+										<div class="side-widget">
+											<div class="side-widget-data">
+												<p class="small-text">(<?php echo e(Lang::get('proceedtocheckout.if.you.want.to.add.some.comment.e.g.delivery.instruction.this.is.right.place')); ?>)</p>
+												<div class="form-group">
+													<textarea type="text" name="remark" value="" placeholder="<?php echo e(Lang::get('proceedtocheckout.add.a.message.to.your.order')); ?>" class="form-control icon-field">
+													</textarea>
+													<i class="flaticon-letter"></i>
+												</div>
+											</div>
+										</div>
+										<!--div class="checkout-btn">Proceed to Checkout</div-->
+										<input type ="submit" class="checkout-btn" value="<?php echo e(Lang::get('proceedtocheckout.Proceed.to.Checkout')); ?>">
+										<?php echo Form::close(); ?>
+
+									</div><!--sidebar-cart-->
+									
+								</div>
+							</div>
+						</div>
+			    </div>
+			    <div role="tabpanel" class="tab-pane" id="Checkout">
+						<div class="sidebar-data">
+							<div class="row">
+								<div class="col-md-8">
+									<div class="cart-summry-data">
+										<div class="page-data-header">
+											<i class="flaticon-round-1"></i>
+											My Contact Details
+										</div>
+										<div class="border-data user-detail">
+											<table class="table">
+												<tbody>
+													<tr>
+														<td style="width: 25%;">Full Name<span>:</span></td>
+														<td> <?php if($user): ?> <?php echo e($user->first_name.' '.$user->last_name); ?> <?php endif; ?> </td>
+													</tr>
+													<tr>
+														<td>Email<span>:</span></td>
+														<td><?php if($user): ?> <?php echo e($user->email); ?> <?php endif; ?></td>
+													</tr>
+													<tr>
+														<td>Mobile<span>:</span></td>
+														<td>+<?php if($user): ?> <?php echo e($user->countrycode.'-'); ?> <?php endif; ?> <?php if($user): ?> <?php echo e($user->contact_number); ?> <?php endif; ?></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										<div class="icon-heading-data">
+											<i class="flaticon-coins-1"></i>
+											Choose How To Pay
+										</div>
+										<div class="payment-box">
+											<div class="payment-tab">
+												<div class="row">
+													<div class="col-md-5">
+														<!-- Nav tabs -->
+													  <ul class="nav nav-tabs" role="tablist">
+													    <li role="presentation" class="active"><a href="#cod" aria-controls="cod" role="tab" data-toggle="tab"><i class="flaticon-icon-1203"></i>Cash on Delivery <span class="flaticon-arrows-1"></span></a></li>
+													  </ul>
+													</div>
+													<div class="col-md-7">
+														<!-- Tab panes -->
+													  <div class="tab-content">
+													    <div role="tabpanel" class="tab-pane active" id="cod">
+																<div class="form-group captcha-field">
+																	<input type="text" name="" value="" class="form-control" placeholder="Enter Captcha">
+																	<button type="button" class="btn btn-primary btn-lg sbmt-btn-abs">Confirm Order</button>
+																</div>
+													    </div>
+													  </div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+
+									</div>
+
+								</div>
+								<div class="col-md-4">
+									<div class="sidebar-cart">
+										<div class="side-widget">
+											<div class="order-review">
+												<div class="side-widget-data or-header-outer">
+													<div class="or-header">
+														<span class="restro-logo" style="background: url('<?php echo e(url('images')); ?>/<?php echo isset($restaurantdetails->image->location) ? $restaurantdetails->image->location : ''; ?>')"></span>
+														Your Order
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<div class="or-products">
+											<?php if(count($cart->getData())): ?>
+												<?php foreach($cart->getData() as $data): ?>
+													<?php if(in_array($key, array('other'))): ?>
+														<?php 	$otherdetails= $data ?>
+													<?php else: ?>
+														<div class="row">
+															<div class="col-xs-9">
+																<div class="single">
+																	<span><?php echo e($data['quantity']); ?>x</span>
+																	<?php echo e($data['name']); ?>
+
+																</div>
+															</div>
+															<div class="col-xs-3">
+																<div class="price text-right"><?php echo e(format($data['totalCost'])); ?></div>
+															</div>
+														</div>
+													<?php endif; ?>
+												<?php endforeach; ?>
+											<?php endif; ?>
+										</div>
+
+										<div class="sub-total">
+											<?php echo e(Lang::get('proceedtocheckout.Subtotal')); ?>: <span><?php echo e(format($cart->getSubtotal())); ?></span>
+										</div>
+										<div class="total">Total:  <?php echo e(format($cart->getTotal('pickup'))); ?></div>
+									</div>
+								</div>
+							</div>
+						</div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var deliveryCharge = "<?php echo $cart->deliveryCharges() ?>";
+deliveryCharge = deliveryCharge ? deliveryCharge : 0;
+jQuery(function($){
+	$( document ).on('click', 'input[name="order_type"]', function(){
+		if( $(this).val() == 'delivery' ) 
+		{
+			$('#delivery').show();
+			var total = parseFloat($('#total').data('total')) + parseFloat(deliveryCharge);
+			$('#total, #net').html( '$' + total );
+		} else {
+			$('#delivery').hide();
+			$('#total, #net').html( '$' + $('#total').data('total') );
+		}
+	});
+
+	// Check if order type is selected
+	$('#checkoutForm').submit(function(){
+		if( !$('input[name="order_type"]:checked').length ) {
+			alert('Select order type to proceed.');
+			return false;
+		}
+
+if( $('input[name="asap"]:checked').val() == 'later' )
+		{
+			if( ! $('input[name="date"] ').val() ) {
+				alert('Enter date to proceed.');
+				return false;
+			}
+			
+			if( ! $('input[name="time"] ').val() ) {
+				alert('Enter time to proceed.');
+				return false;
+			}
+		}
+
+	});
+});
+</script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('publicLayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

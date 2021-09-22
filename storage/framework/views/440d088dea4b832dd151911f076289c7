@@ -1,0 +1,56 @@
+<?php $prefix = \Request::segment(2); ?>
+<?php if(count($data['data']) > 0): ?>
+	<?php $i = 0; ?>
+	<?php foreach($data['data'] as $order): ?>				    		
+	<?php $i++; ?>
+    <tr id="list_data<?php echo e($order->id); ?>">					        	
+        <td><?php echo e($order->order_number); ?></td>
+        <td><?php echo e(date('d M Y',strtotime($order->created_at))); ?> <?php echo e(date('g:i a',strtotime($order->created_at))); ?></td>
+        <td>
+        	<?php if($order->asap == 1): ?>
+        		<?php echo e(date('d M Y',strtotime($order->date))); ?>(ASAP)
+        	<?php else: ?>
+        		<?php echo e(date('d M Y',strtotime($order->date))); ?> <?php echo e(date('g:i a',strtotime($order->time))); ?>
+
+        	<?php endif; ?>
+        </td>
+        <td><?php echo e($order->restaurant_name); ?></td>
+        <td><?php echo e($order->remark); ?></td>
+        <td><?php echo e(format($order->amount)); ?></td>					            
+        <td class="edit-action" data-id="<?php echo e($order->id); ?>" data-controller="dashboard" style="cursor:pointer;">
+		<?php foreach(Config::get('constants.order_status_label.admin') as $key=>$value): ?>
+			<?php if($key == $order->status): ?>
+			 	<?php if($order->order_type !='delivery' && $order->status == 5): ?>
+			 		<u><?php echo e(trans('admin.picked.up')); ?></u>
+			 	<?php else: ?>
+			 		<u><?php echo e($value); ?> </u>
+			 	<?php endif; ?>									 
+			<?php endif; ?>
+		<?php endforeach; ?>						            	
+    	</td>
+        <td>
+        	<?php if($order->order_type !='delivery'): ?>
+        		<?php echo e(trans('admin.order.type')); ?> : <?php echo e(trans('admin.pick.up')); ?>
+
+        	<?php else: ?>
+        		<?php echo e(trans('admin.assigned.to')); ?> <?php echo e($order->driver_name); ?>
+
+        	<?php endif; ?>
+        	
+        </td>
+        <td><a href="<?php echo e(url($prefix.'/order')); ?>/edit/<?php echo e($order->id); ?>"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;<span class="glyphicon glyphicon-remove delete-action" data-id="<?php echo e($order->id); ?>" data-controller="order" style="cursor:pointer;"></span></td>
+    
+    </tr>		        
+    
+	
+    <?php endforeach; ?>
+	<?php else: ?>
+		<tr><td colspan="8" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+	<?php endif; ?>
+<tr>
+	<td colspan="8">
+        <?php echo $data['data']->appends(Request::except('_token'))->render(); ?>
+
+		<?php // echo $data['data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+	</td>
+</tr>        

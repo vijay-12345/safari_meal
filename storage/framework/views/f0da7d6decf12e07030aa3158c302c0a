@@ -1,0 +1,110 @@
+<?php $__env->startSection('title', 'Review List'); ?>
+<?php $__env->startSection('content'); ?>
+<?php 
+use App\Restaurent;
+$prefix = \Request::segment(2);
+$q = Restaurent::lang()->where('status',1);
+$q->where('is_home_cooked',1);
+if(Session::get('access.role') == 'manager'){
+	$q = $q->whereIn('id',Session::get('access.restaurant_ids'));
+}
+$restaurants = $q->lists('name','id');
+?>
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.review.manager')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<?php echo Form::open(array('role' => 'form','class'=>'filter-form','url' => $prefix.'/homecookedreview')); ?>
+
+							<table class="table table-responsive filter-inner-form" cellspacing="0" width="100%">
+								<tr>
+									<td>								
+										<select name="paginate_limit" class="paginate_limit">							
+											<?php foreach(Config::get('constants.paginate_limit_option') as $limitOption): ?>)
+												<option value="<?php echo e($limitOption); ?>" <?php if(session('filter.paginate_limit')==$limitOption): ?> selected <?php endif; ?>><?php echo e($limitOption); ?></option>
+											<?php endforeach; ?>
+										</select>
+										<?php echo Form::select('restaurant_id',['All'=>trans('admin.restaurant.all')]+$restaurants,session('filter.restaurant_id'),['class'=>'restaurant']); ?>
+
+
+										<?php echo Form::select('rating',['All'=>trans('admin.rating.all'),'1'=>1,'2'=>2,'3'=>3,'4'=>4,'5'=>5],session('filter.rating'),['class'=>'rating']); ?>
+
+										<input type="text" name="search" value="<?php echo e(session('filter.search')); ?>" placeholder="<?php echo e(trans('admin.user.name')); ?>">
+										<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+									</td>
+									<td>
+										<a href="<?php echo e(url($prefix.'/homecookedreview')); ?>/add" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add')); ?></a>
+									</td>
+								</tr>
+							</table>
+							<?php echo Form::close(); ?>
+
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>					           
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/homecookedreview?sorting=<?php echo e($filter['sort']); ?>&amp;field=restaurant.name"><?php echo e(trans('admin.restaurant')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/homecookedreview?sorting=<?php echo e($filter['sort']); ?>&amp;field=user.first_name"><?php echo e(trans('admin.customer')); ?></a></th>
+					             <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/homecookedreview?sorting=<?php echo e($filter['sort']); ?>&amp;field=review.review"><?php echo e(trans('admin.review')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/homecookedreview?sorting=<?php echo e($filter['sort']); ?>&amp;field=review.rating"><?php echo e(trans('admin.rating')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/homecookedreview?sorting=<?php echo e($filter['sort']); ?>&amp;field=review.date"><?php echo e(trans('admin.date')); ?></a></th>
+					            
+					             
+					            <th><?php echo e(trans('admin.action')); ?></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+
+					    	<?php if($data != null && count($data['data']) > 0): ?>
+					    		<?php $i = 0; ?>
+						    	<?php foreach($data['data'] as $v): ?>
+						    		<?php $i++; ?>
+						        <tr id="list_data<?php echo e($v->id); ?>" <?php if($i%2==0): ?> style="background-color: #f9f9f9;" <?php else: ?> style="background-color: #FFFFFF;" <?php endif; ?>>					        	
+						            <td><?php echo e(ucfirst($v->restaurant_name)); ?></td>
+						            <td><?php echo e(ucfirst($v->user_fname).' '.ucfirst($v->user_lname)); ?></td>
+						            <td><?php echo e($v->review); ?></td>
+						            <td><?php echo e($v->rating); ?></td>
+						            <td><?php echo e(date('d-m-Y',strtotime($v->date))); ?></td>	            
+						 
+
+						            						            							
+						            <td><a href="<?php echo e(url($prefix.'/homecookedreview').'/edit/'.$v->id); ?>"><span class="glyphicon glyphicon-pencil" style="cursor:pointer;" data-id="<?php echo e($v->id); ?>"></span></a>&nbsp;&nbsp;<span class="glyphicon glyphicon-remove delete-action" data-id="<?php echo e($v->id); ?>" data-controller="homecookedreview" style="cursor:pointer;"></span></td>
+						        </tr>       
+						        
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="8" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+					        <tr>
+					        	<?php if($data != null): ?>
+					        	<td colspan="8">
+					        		<?php echo $data['data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+					        	</td>
+					        	<?php endif; ?>
+					        </tr>
+					        
+					    </tbody>
+						</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

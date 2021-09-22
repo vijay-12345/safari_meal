@@ -1,0 +1,53 @@
+<?php $__env->startSection('title', 'Contact::'.Config::get('constants.site_name')); ?>
+<?php $__env->startSection('content'); ?>
+<tr>
+   <td class='movableContentContainer' valign='top' style="padding-top: 20px;">
+      
+      <div class='movableContent'>
+         <table width="520" border="0" cellspacing="0" cellpadding="0" align="center">
+            <tr>
+               <td align='left'>
+                  <div class="contentEditableContainer contentTextEditable">
+                     <div class="contentEditable" align='center'>
+                        <h2><?php echo e(trans('email.hi')); ?> <?php echo e($user->first_name.' '.$user->last_name); ?>,</h2>
+                     </div>
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td height='15'> </td>
+            </tr>
+            <tr>
+               <td align='left'>
+                  <div class="contentEditableContainer contentTextEditable">
+                     <div class="contentEditable" align='center'>
+                        <p  style='text-align:left;color:#999999;font-size:14px;font-weight:normal;line-height:19px;'>
+                           <?php echo e(trans('email.received_message')); ?>
+
+                           <br>
+                           <br>
+                           <a href="<?php echo e(url('password/reset/'.$token)); ?>" title="Reset Password"><?php echo e(trans('email.reset_password')); ?></a>
+                           <br>
+                           <br>
+                           <?php echo e(trans('email.or')); ?>
+
+                           <br>
+                           <br>
+                           <?php echo e(trans('email.copy_link')); ?>
+
+                           <br>
+                           <a href="<?php echo e(url('password/reset/'.$token)); ?>"><?php echo e(url('password/reset/'.$token)); ?></a>
+                        </p>
+                     </div>
+                  </div>
+               </td>
+            </tr>
+            <tr>
+               <td height='20'></td>
+            </tr>
+         </table>
+      </div>
+   </td>
+</tr>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('emails.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,88 @@
+<?php if(!Request::ajax()): ?>
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title><?php echo $__env->yieldContent('title'); ?></title>
+
+		<link href="<?php echo e(asset('css/bootstrap.css')); ?>" rel="stylesheet">
+		<link href="<?php echo e(asset('css/font-awesome.min.css')); ?>" rel="stylesheet" media="all">
+		<link href="<?php echo e(asset('css/flat-icon/flaticon.css')); ?>" rel="stylesheet">
+		<link href="<?php echo e(asset('css/jquery.dataTables.min.css')); ?>" rel="stylesheet">
+		<link href="<?php echo e(asset('css/admin.css')); ?>" rel="stylesheet">
+		<link href="<?php echo e(asset('css/responsive.css')); ?>" rel="stylesheet" media="all">
+		<link href="<?php echo e(asset('css/bootstrap-datetimepicker.css')); ?>" rel="stylesheet" media="all">
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		<script type="text/javascript" src="<?php echo e(asset('js/jquery-1.11.3.min.js')); ?>"></script>
+		<script type="text/javascript" src="<?php echo e(asset('js/bootstrap.min.js')); ?>"></script>
+		<script type="text/javascript" src="<?php echo e(asset('js/moment-with-locales.js')); ?>"></script>
+		<script type="text/javascript" src="<?php echo e(asset('js/bootstrap-datetimepicker.js')); ?>"></script>
+		<script type="text/javascript" src="<?php echo e(asset('js/typeahead.js')); ?>"></script>
+		<script type="text/javascript" src="<?php echo e(asset('js/admin.js')); ?>"></script>
+		<script>
+		   	var baseUrl = "<?php echo e(url('/')); ?>/";
+		</script>
+	</head>
+
+	<body>
+		<?php echo $__env->make('admin.header', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php endif; ?>
+
+<?php echo $__env->yieldContent('content'); ?>
+
+<?php if(!Request::ajax()): ?>
+
+	<script>
+		$(document).ready(function(){
+			
+			// Orders notification update
+			setInterval(function() {
+				
+				getNotification();
+
+			}, 5000);
+
+			var pageheight = $('.page-data-right').height();
+			$('.side-menu').css({
+				'min-height': pageheight + 50,
+			});	
+		});
+
+
+		function getNotification() {
+			// url: baseUrl + 'admin/order/get-count',
+			$.ajax({
+				type: 'get',
+				url: baseUrl + 'order/get-count',
+				success: function (response) {
+
+					var notificationBar = $('.notification_count');
+
+					if (response > notificationBar.html()) {
+
+						notificationBar.html(response);
+
+						var audio = document.getElementById('notification-audio')
+						// var audio = new Audio(baseUrl + 'sound/slow-spring-board.ogg');
+						audio.play();
+
+					} 
+				}
+			})
+		}
+
+		getNotification();
+	</script>
+
+	</body>
+	
+</html>
+<?php endif; ?>

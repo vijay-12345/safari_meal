@@ -1,0 +1,137 @@
+<?php $__env->startSection('title', trans('admin.order.list')); ?>
+
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			
+			<div class="col-md-9">
+				
+				<?php $prefix = \Request::segment(2); ?>
+
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading"><?php echo e(trans('admin.order.manager')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+							
+							<?php echo Form::open(array('role' => 'form','class'=>'filter-form search-form','url' => $prefix.'/order')); ?>
+
+								<table class="table table-responsive filter-inner-form" cellspacing="0" width="100%">
+									<tr>
+										<td>
+											<select name="paginate_limit" class="paginate_limit">							
+												<?php foreach(Config::get('constants.paginate_limit_option') as $limitOption): ?>)
+													<option value="<?php echo e($limitOption); ?>" <?php if(session('filter.paginate_limit')==$limitOption): ?> selected <?php endif; ?>><?php echo e($limitOption); ?></option>
+												<?php endforeach; ?>
+											</select>
+											<select name="date">
+												<option value="<?php echo e(date('Y-m-d')); ?>">Today</option>							
+												<option value="all" <?php if(session('filter.date')=='all'): ?> selected <?php endif; ?>>All</option>
+											</select>
+											<select name='status'>
+												<option value=''>---Select Status---</option>
+												<option value='open' <?php echo e(session('filter.status') == 'open' ? 'selected' : ''); ?>>Open</option>
+												<option value='closed' <?php echo e(session('filter.status') == 'closed' ? 'selected' : ''); ?>>Closed</option>
+											</select>
+											<input name="custom_date" id="custom_date" value="<?php echo e(session('filter.custom_date')); ?>" placeholder="yyyy-mm-dd">
+											<input type="text" name="search" value="<?php echo e(session('filter.search')); ?>" placeholder="<?php echo e(trans('admin.order.number')); ?>">
+										   	<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+										</td>
+										<td>
+											<a href="<?php echo e(url($prefix.'/order')); ?>/add" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add')); ?></a>
+										</td>
+									</tr>
+								</table>
+							<?php echo Form::close(); ?>
+
+							
+							<table id="table" class="table table-striped" cellspacing="0" width="100%">
+								<thead>
+								    <tr>				           
+									    <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=order.order_number"><?php echo e(trans('admin.order.id')); ?></a></th>
+									    <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=order.created_at"><?php echo e(trans('admin.order_placed_time')); ?></a></th>
+								        <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=order.date"><?php echo e(trans('admin.order_delivery_time')); ?></a></th>
+								        <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=restaurant.name"><?php echo e(trans('admin.restaurants')); ?></a></th>
+								        <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=order.remark"><?php echo e(trans('admin.client.remark')); ?></a></th>
+								        <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=order.amount"><?php echo e(trans('admin.amount')); ?></a></th>
+								        <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=order.status"><?php echo e(trans('admin.order.status')); ?></a></th>
+								        <th><a class="action-ajax" href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/order?sorting=<?php echo e($filter['sort']); ?>&amp;field=driver.first_name"><?php echo e(trans('admin.driver.status')); ?></a></th>
+								        <th><?php echo e(trans('admin.action')); ?></th>
+								    </tr>
+								</thead>
+								<!-- handle when blank input in search -->
+								<?php if($data == null): ?>
+								<tr><td colspan="8" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+								<?php else: ?>
+								<tbody id="ajax_data" data-href="<?php echo e(Request::fullUrl()); ?>">							    
+								</tbody>
+								<?php endif; ?>
+
+							</table>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ************************Date range script******************************** -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	window.setInterval(function() {
+	  loadOrderData();
+	}, 30000);
+
+	loadOrderData(); // first time run 
+
+	$(".action-ajax").on("click",function(e){
+		e.preventDefault();
+		var ahref = $(this).attr('href');
+		$("#ajax_data").attr('data-href',ahref);
+		loadOrderData();
+	});
+	$( "#custom_date" ).datepicker({
+		dateFormat:"yy-mm-dd",
+		defaultDate: "+1w",
+      	changeMonth: true
+  	});
+});
+
+function loadOrderData() {
+   var form_search_data = $(".search-form").serialize();  	  
+   $("#ajax_data").html('<b style="text-align:center;">Please Wait...</b>');
+   $.ajax({
+	   	url:$("#ajax_data").attr('data-href'),
+	   	type:'POST',
+	   	dataType:'text',
+	   	data:form_search_data,
+	   	success:function(response){
+	   		$("#ajax_data").html(response);
+	   	},
+	   	error:function(errorResponseText){
+	   		console.log(errorResponseText);
+	   	}
+   });	
+}
+</script>
+
+<?php $__env->stopSection(); ?>
+
+
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

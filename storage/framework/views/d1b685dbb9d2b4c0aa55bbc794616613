@@ -1,0 +1,149 @@
+<?php 
+use App\Image,App\Restaurent; 
+$prefix = \Request::segment(2);
+$q = Restaurent::lang()->where('status',1);
+if(Session::get('access.role') != 'admin'){
+	$q = $q->whereIn('id',Session::get('access.restaurant_ids'));
+}
+$restaurants = $q->lists('name','id');
+?>
+
+
+<?php $__env->startSection('title', trans('admin.product.list')); ?>
+<?php $__env->startSection('content'); ?>
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.product.manager')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<?php echo Form::open(array('role' => 'form','class'=>'filter-form','url' => $prefix.'/product')); ?>
+
+							<table class="table table-responsive filter-inner-form" cellspacing="0" width="100%">
+								<tr>
+									<td>
+										<select name="paginate_limit" class="paginate_limit">							
+											<?php foreach(Config::get('constants.paginate_limit_option') as $limitOption): ?>)
+												<option value="<?php echo e($limitOption); ?>" <?php if(session('filter.paginate_limit')==$limitOption): ?> selected <?php endif; ?>><?php echo e($limitOption); ?></option>
+											<?php endforeach; ?>
+										</select>
+
+										<?php if(Session::get('access.role') == 'admin'): ?>
+											<?php echo Form::select('restaurant_id',['All'=>trans('admin.restaurant.all')]+$restaurants,session('filter.restaurant_id'),['class'=>'restaurant']); ?>
+
+										<?php endif; ?>
+										
+										<input type="text" placeholder="<?php echo e(trans('admin.name')); ?>" name="search" value="<?php echo e(session('filter.search')); ?>">
+										<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+									</td>
+									<td>
+										<a href="<?php echo e(url($prefix.'/product')); ?>/add" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add')); ?>
+
+										</a>
+									</td>
+								</tr>
+							</table>
+
+							<?php echo Form::close(); ?>
+
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+					    <thead>
+					        <tr>
+					        	<th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/product?sorting=<?php echo e($filter['sort']); ?>&amp;field=restaurant.name"><?php echo e(trans('admin.restaurant')); ?></a></th>
+					            <th><?php echo e(trans('admin.image')); ?></th>
+
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/product?sorting=<?php echo e($filter['sort']); ?>&amp;field=product.name"><?php echo e(trans('admin.name')); ?></a></th>
+					           
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/product?sorting=<?php echo e($filter['sort']); ?>&amp;field=product.created_at"><?php echo e(trans('admin.created')); ?></a></th>
+					            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/product?sorting=<?php echo e($filter['sort']); ?>&amp;field=product.status"><?php echo e(trans('admin.status')); ?></a></th>
+					            <th><?php echo e(trans('admin.cost')); ?></th>        
+					           
+					            <th><?php echo e(trans('admin.action')); ?></th>
+					        </tr>
+					    </thead>
+					    <tbody>
+
+					    	<?php if(count($data['data']) > 0): ?>
+					    		<?php $i = 0; ?>
+						    	<?php foreach($data['data'] as $v): ?>
+						    		<?php $i++; ?>
+						        <tr id="list_data<?php echo e($v->id); ?>" <?php if($i%2==0): ?> style="background-color: #f9f9f9;" <?php else: ?> style="background-color: #FFFFFF;" <?php endif; ?>>				        	
+						          	<td><?php echo e(ucfirst($v->restaurant_name)); ?></td> 
+						            <td>
+						            	<?php						         
+						            		$image = Image::getImagePath('restaurant');
+					            		?>
+					            		<?php 
+							         	if(!is_null($v->image['location'])){
+							            	
+						            		$restaurantImage = $v->image['location'];
+						            		$restaurantLogo  = $v->image['logo_location'];
+						            		// if(!file_exists($restaurantImage)) $restaurantImage = $image['default_image'];
+							            	
+						            	}else{
+
+							            	$restaurantImage = $image['default_image']; 
+						            	}?>
+						            	         
+						            	<img src="<?php echo e($restaurantImage); ?>" width="80" alt="logo">
+						            </td>
+		            					            
+						            <td><?php echo e(ucfirst($v->name)); ?></td>  	
+					      				
+						           <td><?php echo e($v->created_at); ?></td>
+												             <td>
+						             	<?php if($v->status == 1): ?>
+						            		<?php echo e(trans('admin.active')); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e(trans('admin.inactive')); ?>
+
+						            	<?php endif; ?></td>	           
+						            <td><?php echo e(format($v->cost)); ?></td>
+					             	<td>
+					             		<span class="glyphicon glyphicon-plus-sign view-action" data-id="<?php echo e($v->id); ?>" style="cursor:pointer;"></span>&nbsp;&nbsp;<a href="<?php echo e(url($prefix.'/product').'/edit/'.$v->id); ?>"><span class="glyphicon glyphicon-pencil" style="cursor:pointer;" data-id="<?php echo e($v->id); ?>"></span></a>&nbsp;&nbsp;<span class="glyphicon glyphicon-remove delete-action" data-id="<?php echo e($v->id); ?>" data-controller="product" style="cursor:pointer;"></span></td>
+						        </tr>				        
+						        <tr style="display:none;" id="view_data<?php echo e($v->id); ?>">
+						        	<td colspan="10">
+						        		<table class="table-responsive" cellspacing="0" width="100%">
+						        			<tr>
+						        				<td><strong><?php echo e(trans('admin.product.id')); ?> :</strong> <?php echo e($v->id); ?></td>						        				
+						        				<td><strong><?php echo e(trans('admin.name')); ?> :</strong> <?php echo e(ucfirst($v->name)); ?></td>
+						         			</tr>
+						        		</table>
+						        	</td>	
+						        </tr>
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="10" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+					        <tr>
+					        	<td colspan="10">
+					        		<?php echo $data['data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+					        	</td>
+					        </tr>
+					        
+					    </tbody>
+						</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

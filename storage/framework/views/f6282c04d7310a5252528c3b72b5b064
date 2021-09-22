@@ -1,0 +1,148 @@
+<?php 
+use App\Image; 
+$prefix = \Request::segment(2);
+?>
+
+<?php $__env->startSection('title', trans('admin.restaurant.list')); ?>
+<?php $__env->startSection('content'); ?>
+
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.restaurant.manager')); ?></div>
+						<div class="panel-body">
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+
+							<?php echo Form::open(array('role' => 'form','class'=>'filter-form','url' => $prefix.'/restaurant')); ?>
+
+							<table class="table table-responsive filter-inner-form" cellspacing="0" width="100%">
+								<tr>
+									<?php if(Session::get('access.role') == 'admin'): ?>
+										<td>
+											<select name="paginate_limit" class="paginate_limit">							
+												<?php foreach(Config::get('constants.paginate_limit_option') as $limitOption): ?>)
+													<option value="<?php echo e($limitOption); ?>" <?php if(session('filter.paginate_limit')==$limitOption): ?> selected <?php endif; ?>><?php echo e($limitOption); ?></option>
+												<?php endforeach; ?>
+											</select>
+											<input type="text" placeholder="<?php echo e(trans('admin.name')); ?>" name="search" value="<?php echo e(session('filter.search')); ?>">
+											<button type="submit" class="btn btn-primary" value="<?php echo e(trans('admin.search')); ?>"><?php echo e(trans('admin.search')); ?></button>
+										</td>
+									<?php endif; ?>
+									
+									<?php if(Session::get('access.role') == 'admin'): ?>
+										<td><a href="<?php echo e(url($prefix.'/restaurant')); ?>/add" class="btn btn-primary btn-md">+ <?php echo e(trans('admin.add')); ?></a></td>
+									<?php endif; ?>
+								</tr>
+							</table>
+							<?php echo Form::close(); ?>
+
+							
+							<table id="table" class="table table-striped dashboard-order" cellspacing="0" width="100%">
+
+						    <thead>
+						        <tr>
+						        	<!-- <?php echo e(app('request')->input('sorting')); ?> -->
+						            <th><?php echo e(trans('admin.logo')); ?></th>
+						            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/restaurant?sorting=<?php echo e($filter['sort']); ?>&amp;field=name"><?php echo e(trans('admin.name')); ?></a></th>
+						            <th><?php echo e(trans('admin.address')); ?></th>					 
+						            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/restaurant?sorting=<?php echo e($filter['sort']); ?>&amp;field=restaurant.rating"><?php echo e(trans('admin.rating')); ?></a></th>
+						            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/restaurant?sorting=<?php echo e($filter['sort']); ?>&amp;field=restaurant.featured"><?php echo e(trans('admin.featured')); ?></a></th>					           
+						            <th><a href="<?php echo e(URL::to('/')); ?>/<?php echo e($prefix); ?>/restaurant?sorting=<?php echo e($filter['sort']); ?>&amp;field=restaurant.status"><?php echo e(trans('admin.status')); ?></a></th>					           
+						            <th><?php echo e(trans('admin.action')); ?></th>
+						        </tr>
+						    </thead>
+					    <tbody>
+
+					    	<?php if(count($data['data']) > 0): ?>					    		
+						    	<?php foreach($data['data'] as $v): ?>						    		
+						        <tr>					        	
+						          	
+						            <td>
+						            	<?php						         
+						            		$image = Image::getImagePath('restaurant');
+					            		
+					            		if(!is_null($v->logo_location) || !is_null($v->location)){
+							            	
+								            	$restaurantImage = $v->location; 
+												$restaurantLogo  = $v->logo_location;
+												// if(!file_exists($restaurantImage)) $restaurantImage = $image['default_image'];
+												// if(!file_exists($restaurantLogo)) $restaurantLogo = $image['default_image'];
+							            	
+						            	}else{
+							            							         
+							            		$restaurantImage = $restaurantLogo = $image['default_image'];
+							            	
+							            } ?>
+						            		            
+						            	<img src="<?php echo e($restaurantLogo); ?>" width="80" alt="logo" style="width: 100px;height: 100px;border-radius: 50%;border: 1px solid #ddd;text-align: center;background-position: 52% 54%!important;background-size: 90px!important; background-repeat: no-repeat!important;">
+						            </td>
+						            <td><?php echo e(ucfirst($v->name)); ?></td> 	
+					       						            	
+						            
+						            <td><?php echo e('Floor-'.$v->floor.','.$v->street); ?></td>						       				            							
+						            
+						            <td><?php echo e($v->rating); ?></td>
+						            <td class="toggleFeatured" data-value="">
+						            	<?php if($v->featured == 1): ?>
+						            		<?php echo e(trans('admin.yes')); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e(trans('admin.no')); ?>
+
+						            	<?php endif; ?>
+						            </td>						            
+						            <td>
+						            	<?php if($v->status == 1): ?>
+						            		<?php echo e(trans('admin.active')); ?>
+
+						            	<?php else: ?>
+						            		<?php echo e(trans('admin.inactive')); ?>
+
+						            	<?php endif; ?>
+
+
+						            </td>
+						            <td>
+
+						            	<?php if( (Session::get('access.role') == 'admin' || Session::get('access.role') == 'restaurant')): ?>
+						            	<a href="<?php echo e(url($prefix.'/restaurant').'/access/'.$v->id); ?>" class="glyphicon glyphicon-user" <?php if($v->owner_id >0) {?> style="color:#006400;" <?php } ?> alt="<?php echo e(trans('admin.restaurant.credential')); ?>"></a>&nbsp;&nbsp;
+						            	<?php endif; ?>
+						            	<a href="<?php echo e(url($prefix.'/restaurant').'/edit/'.$v->id); ?>"><span class="glyphicon glyphicon-pencil" style="cursor:pointer;" data-id="<?php echo e($v->id); ?>"></span></a>&nbsp;&nbsp;
+						            	<a href="<?php echo e(url($prefix.'/timing').'/'.$v->id); ?>" class="glyphicon glyphicon-time" alt="Open Timing" title="Open Timing"></a>&nbsp;&nbsp;
+						            	<?php if(Session::get('access.role') == 'admin'): ?>
+						            		<span class="glyphicon glyphicon-remove delete-action" data-id="<?php echo e($v->id); ?>" data-controller="restaurant" style="cursor:pointer;"></span>
+						            	<?php endif; ?>
+						            </td>
+						        </tr>
+						        <?php endforeach; ?>
+					      	<?php else: ?>
+					      		<tr><td colspan="10" class="text-center"><?php echo e(trans('admin.record.not.found')); ?></td></tr>
+					      	<?php endif; ?>
+					        <tr>
+					        	<td colspan="10">
+					        		<?php echo $data['data']->appends(['sort' => $filter['paginate_sort'],'field'=>$filter['field']])->render(); ?>
+					        	</td>
+					        </tr>
+					        
+					    </tbody>
+						</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

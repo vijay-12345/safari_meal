@@ -1,0 +1,121 @@
+<?php $__env->startSection('title', trans('admin.edit.order')); ?>
+<?php $__env->startSection('content'); ?>
+<?php 
+$prefix = \Request::segment(2); 
+?>
+<div class="page-data-cont">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="col-md-3 side-menu sidebar-menu">
+			 	<?php echo $__env->make('admin.navigation', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>				
+			</div>
+			<div class="col-md-9">
+				<div class="page-data-right">
+					<div class="panel panel-default">
+						<div class="panel-heading text-center"><?php echo e(trans('admin.edit.order')); ?></div>
+						<div class="panel-body">
+							
+
+							<?php if(Session::has('flash_message')): ?>
+							    <div class="alert alert-success">
+							        <?php echo e(Session::get('flash_message')); ?>	   
+							    </div>
+							<?php endif; ?>
+							<?php if($errors->any()): ?>
+							    <div class="alert alert-danger">
+							        <?php foreach($errors->all() as $error): ?>
+							            <p><?php echo e($error); ?></p>
+							        <?php endforeach; ?>
+							    </div>
+							<?php endif; ?>			
+							<?php 
+							$order=$data['order'];
+							?>
+							 <?php echo Form::model($data['order'], ['method' => 'post','role' => 'form','class'=>'form-horizontal','url' => $prefix.'/order/update'.'/'.$data['order']->id]); ?>	
+							  	<br />	
+								<div class="form-group">
+							      <label class="control-label col-sm-2" for="restaurant_id"><?php echo e(trans('admin.restaurant')); ?>:</label>
+							      <div class="col-sm-10">
+							      	<?php echo $order->restaurant_name;; ?> 
+							      </div>							      
+						    	</div>	
+								<div class="form-group">
+							      <label class="control-label col-sm-2" for="customer name"><?php echo e(trans('admin.customer.name')); ?>:</label>
+							      <div class="col-sm-10">							    	
+							    		<?php if(count($customer) >0): ?>
+											<?php echo e(ucfirst($customer->first_name).' '.ucfirst($customer->last_name)); ?>
+
+							    		<?php else: ?>
+							    			N/A
+							    		<?php endif; ?>							    								    
+							      </div>							      
+						    	</div>					    						    	
+
+						    	<div class="form-group">
+							      <label class="control-label col-sm-2" for="restaurant_id"><?php echo e(trans('admin.order.number')); ?>:</label>
+							      <div class="col-sm-10">
+									  <?php echo e($order->order_number); ?>
+
+									<input type='hidden' name='order_id' value="<?=$order->id;?>" />
+							      </div>							      
+						    	</div>
+						    	<div class="form-group">
+							      <label class="control-label col-sm-2" for="restaurant_id"><?php echo e(trans('admin.set.order.status')); ?>:</label>
+							      <div class="col-sm-10">
+							      	<?php echo Form::select('status',orderTypeLabel($order->order_type), null, ['class' => 'form-control']); ?> 
+							      </div>							      
+						    	</div>
+						    	<div class="form-group">
+								  <div class="col-md-2">
+									 
+							    	</div>
+							      <?php if(!in_array($order->order_type,['is_pickup','pickup'])): ?>
+							      <div class="col-md-10">
+							      	<?php echo view('admin.order.ajaxcustomer',['customer'=>$customer,'order'=>$order,'action'=>'orderview'])->render();	?>
+							      </div>
+							      <?php endif; ?>							      
+						    	</div>
+						    	<div class="clearfix"></div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="page-data-right">
+												<div class="panel panel-default">
+													<div class="panel-heading text-center"><?php echo e(trans('admin.order.view')); ?></div>
+														<div class="panel-body">	
+															 <?php echo view('admin.order.view',['orderdetails'=>$orderdetails, 'order' => $order])->render();	?>
+														</div>
+													</div>
+												</div>
+											</div>	
+										</div>	
+									</div>			    		
+						    	</div>
+						    	<div class="clearfix"></div><br>
+						    	<div class="row">
+						    		<div class="col-sm-12">
+						    			<?php if(!empty($data['referer'])): ?>
+						    				<?php echo Form::hidden('referer',$data['referer']); ?>
+
+						    				<a href="<?php echo e(url($prefix.'/'.$data['referer'])); ?>" class="btn btn-primary"><?php echo e(trans('admin.back')); ?></a>&nbsp;
+						    			<?php else: ?>
+						    				<a href="<?php echo e(url($prefix.'/order')); ?>" class="btn btn-primary"><?php echo e(trans('admin.back')); ?></a>&nbsp;
+						    			<?php endif; ?>						  							  						  
+							  			<button type="submit" class="btn btn-primary"><?php echo e(trans('admin.update')); ?></button>
+							  		</div>
+							  	</div>
+							<?php echo Form::close(); ?>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(".panel-heading").html();
+</script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
